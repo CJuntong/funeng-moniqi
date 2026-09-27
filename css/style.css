@@ -391,7 +391,7 @@ body {
 }
 .map-stage .ch-l { box-shadow: 0 0 4px rgba(0, 0, 0, 0.9); }
 
-/* 鼠标放大镜：圆形跟随，镜内为放大地图 + 准星 */
+/* 鼠标放大镜：圆形跟随，镜内为整个场景的 3 倍缩放副本（准星同样被放大） */
 .map-lens {
   position: absolute;
   left: -200px;
@@ -401,20 +401,23 @@ body {
   border-radius: 50%;
   border: 2px solid rgba(255, 255, 255, 0.55);
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55), inset 0 0 24px rgba(0, 0, 0, 0.4);
-  background-repeat: no-repeat;
   pointer-events: none;
   z-index: 2;
   opacity: 0;
   transition: opacity 0.18s ease;
   overflow: hidden;
+}
+.map-lens-inner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-size: cover;
+  background-position: center;
+  transform-origin: 0 0;
   display: grid;
   place-items: center;
 }
-.map-lens .lens-ch {
-  transition: transform 0.12s ease-out;
-  background: transparent;
-  border: none;
-}
+.map-lens .lens-ch { background: transparent; border: none; }
 .map-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
 .mc-btn {
   background: var(--panel);

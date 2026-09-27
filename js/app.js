@@ -259,22 +259,20 @@ function openDetail(id) {
       ${p.crosshairCode ? `<p class="d-import">导入方法：游戏内 → 设置 → 准星 → 导入准星代码 → 粘贴后确认</p>
 
       ${typeof MAPS !== "undefined" && MAPS.length ? `
-      <div class="map-stage" id="map-stage" data-map="0" data-k="9" style="background-image:url('assets/地图/${MAPS[0]}.png')">
+      <div class="map-stage" id="map-stage" data-map="0" style="background-image:url('assets/地图/${MAPS[0]}.png')">
         <div class="map-shade"></div>
-        <span class="ch-box" id="stage-ch" style="width:150px;height:150px;color:${chColorOf(p)}">${crosshairParts(p, 150, 9)}</span>
-        <div class="map-lens" id="map-lens" style="background-image:url('assets/地图/${MAPS[0]}.png')">
-          <span class="ch-box lens-ch" style="width:150px;height:150px;color:${chColorOf(p)}">${crosshairParts(p, 150, 9)}</span>
+        <span class="ch-box" id="stage-ch" style="width:120px;height:120px;color:${chColorOf(p)}">${crosshairParts(p, 120, 3)}</span>
+        <div class="map-lens" id="map-lens">
+          <div class="map-lens-inner" id="map-lens-inner" style="background-image:url('assets/地图/${MAPS[0]}.png')">
+            <span class="ch-box lens-ch" style="width:120px;height:120px;color:${chColorOf(p)}">${crosshairParts(p, 120, 3)}</span>
+          </div>
         </div>
       </div>
       <div class="map-controls">
         <button class="mc-btn" data-act="prev" type="button">‹ 上张地图</button>
         <span class="map-name" id="map-name">${MAPS[0]}</span>
         <button class="mc-btn" data-act="next" type="button">下张地图 ›</button>
-        <span class="mc-label">放大倍数</span>
-        <button class="mc-btn" data-act="zoom" data-k="5" type="button">5×</button>
-        <button class="mc-btn" data-act="zoom" data-k="9" type="button">9×</button>
-        <button class="mc-btn" data-act="zoom" data-k="14" type="button">14×</button>
-        <span class="map-hint">鼠标移到地图上，放大镜跟随并动态放大</span>
+        <span class="map-hint">准星为游戏内正常大小 · 鼠标靠近它，放大镜会把细节放大</span>
       </div>` : ""}` : ""}
     </div>
 
@@ -366,26 +364,25 @@ function renderStats() {
     `<span>覆盖 <b>${teams}</b> 支战队</span>`;
 }
 
-// ---------- 地图预览台：鼠标放大镜（越靠近中心准星，放大越明显） ----------
-function initMapLens(p) {
+// ---------- 地图预览台：放大镜（场景中准星为正常大小，鼠标凑近即放大细节） ----------
+function initMapLens() {
   const stage = $("#map-stage");
   const lens = $("#map-lens");
-  if (!stage || !lens) return;
+  const inner = $("#map-lens-inner");
+  if (!stage || !lens || !inner) return;
   const R = 80;   // 放大镜半径
+  const Z = 3;    // 放大倍数
   stage.addEventListener("mousemove", (e) => {
     const rect = stage.getBoundingClientRect();
     const x = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
     const y = Math.max(0, Math.min(rect.height, e.clientY - rect.top));
-    const dist = Math.hypot(x - rect.width / 2, y - rect.height / 2);
-    const maxDist = Math.hypot(rect.width, rect.height) / 2;
-    const zoom = 4 - 2 * Math.min(1, dist / maxDist);   // 中心 4×，边缘 2×，平滑过渡
     lens.style.left = `${x - R}px`;
     lens.style.top = `${y - R}px`;
     lens.style.opacity = "1";
-    lens.style.backgroundSize = `${rect.width * zoom}px ${rect.height * zoom}px`;
-    lens.style.backgroundPosition = `${-(x * zoom - R)}px ${-(y * zoom - R)}px`;
-    const ch = lens.querySelector(".lens-ch");
-    if (ch) ch.style.transform = `scale(${(zoom / 2).toFixed(3)})`;   // 准星随距离自然放大
+    // 镜内副本与舞台等尺寸，缩放后平移使鼠标所指的点落在镜片中心
+    inner.style.width = `${rect.width}px`;
+    inner.style.height = `${rect.height}px`;
+    inner.style.transform = `translate(${R - x * Z}px, ${R - y * Z}px) scale(${Z})`;
   });
   stage.addEventListener("mouseleave", () => { lens.style.opacity = "0"; });
 }
@@ -427,21 +424,15 @@ function bindEvents() {
     const act = e.target.closest("[data-act]");
     if (act) {
       const stage = $("#map-stage");
-      const p = PLAYERS.find((x) => x.id === $("#modal-body").dataset.pid);
-      if (!stage || !p) return;
+      if (!stage) return;
       let mapIdx = +stage.dataset.map || 0;
-      let k = +stage.dataset.k || 9;
       if (act.dataset.act === "prev") mapIdx = (mapIdx - 1 + MAPS.length) % MAPS.length;
       if (act.dataset.act === "next") mapIdx = (mapIdx + 1) % MAPS.length;
-      if (act.dataset.act === "zoom") k = +act.dataset.k;
       stage.dataset.map = mapIdx;
-      stage.dataset.k = k;
       stage.style.backgroundImage = `url('assets/地图/${MAPS[mapIdx]}.png')`;
-      const lensEl = $("#map-lens");
-      if (lensEl) lensEl.style.backgroundImage = `url('assets/地图/${MAPS[mapIdx]}.png')`;
+      const innerEl = $("#map-lens-inner");
+      if (innerEl) innerEl.style.backgroundImage = `url('assets/地图/${MAPS[mapIdx]}.png')`;
       $("#map-name").textContent = MAPS[mapIdx];
-      const ch = $("#stage-ch");
-      if (ch) ch.outerHTML = `<span class="ch-box" id="stage-ch" style="width:150px;height:150px;color:${chColorOf(p)}">${crosshairParts(p, 150, k)}</span>`;
       return;
     }
     const copyBtn = e.target.closest("[data-copy]");
