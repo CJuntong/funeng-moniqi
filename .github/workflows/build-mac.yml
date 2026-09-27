@@ -1,0 +1,55 @@
+# 赋能模拟器 · Mac 版云端打包
+# 在 GitHub Actions 云端 Mac 电脑上构建 .dmg 安装包（无需本地有 Mac）
+# 触发方式：仓库页面 Actions → 打包Mac版 → Run workflow（手动触发）
+name: 打包Mac版
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-mac:
+    runs-on: macos-latest
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+
+      - name: 安装 pnpm（读取 package.json 里锁定的版本）
+        uses: pnpm/action-setup@v4
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: 安装依赖
+        run: pnpm install
+
+      - name: 生成 Mac 图标（icns）
+        run: |
+          mkdir -p build
+          sips -z 512 512 "assets/图标/源能战魂.png" --out build/icon.png
+          mkdir -p build/icon.iconset
+          sips -z 16 16     build/icon.png --out build/icon.iconset/icon_16x16.png
+          sips -z 32 32     build/icon.png --out build/icon.iconset/icon_16x16@2x.png
+          sips -z 32 32     build/icon.png --out build/icon.iconset/icon_32x32.png
+          sips -z 64 64     build/icon.png --out build/icon.iconset/icon_32x32@2x.png
+          sips -z 128 128   build/icon.png --out build/icon.iconset/icon_128x128.png
+          sips -z 256 256   build/icon.png --out build/icon.iconset/icon_128x128@2x.png
+          sips -z 256 256   build/icon.png --out build/icon.iconset/icon_256x256.png
+          sips -z 512 512   build/icon.png --out build/icon.iconset/icon_256x256@2x.png
+          sips -z 512 512   build/icon.png --out build/icon.iconset/icon_512x512.png
+          sips -z 512 512   build/icon.png --out build/icon.iconset/icon_512x512@2x.png
+          iconutil -c icns build/icon.iconset -o build/icon.icns
+
+      - name: 打包 dmg
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: false   # 未购买苹果开发者证书，跳过签名
+        run: pnpm dist --mac
+
+      - name: 上传安装包（在 Actions 运行结果页可下载）
+        uses: actions/upload-artifact@v4
+        with:
+          name: 赋能模拟器-Mac
+          path: release/*.dmg
+          if-no-files-found: error

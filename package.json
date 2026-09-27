@@ -39,6 +39,11 @@
       "target": "nsis",
       "icon": "electron/icons/icon.ico"
     },
+    "mac": {
+      "target": "dmg",
+      "icon": "build/icon.icns",
+      "category": "public.app-category.games"
+    },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
