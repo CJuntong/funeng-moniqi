@@ -574,12 +574,11 @@ body {
   display: grid;
   place-items: center;
 }
-.map-shade { position: absolute; inset: 0; background: rgba(8, 14, 20, 0.38); }
 .map-stage .ch-box {
   position: relative;
   z-index: 1;
-  background: rgba(11, 20, 29, 0.18);
-  border-color: rgba(255, 255, 255, 0.12);
+  background: transparent;
+  border: none;
 }
 .map-stage .ch-l { box-shadow: 0 0 4px rgba(0, 0, 0, 0.9); }
 
@@ -640,8 +639,15 @@ body {
   display: grid;
   place-items: center;
   overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
-.wall-tile .ch-box { background: transparent; border: none; }
+.wall-tile:hover { border-color: var(--accent); }
+.wall-tile.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.wall-tile .ch-box { background: transparent; border: none; transition: transform 0.18s ease; z-index: 1; }
+.wall-tile:hover .ch-box { transform: scale(2.2); }   /* 凑近小格即放大细看准星 */
+.wall-tile .wall-label { z-index: 2; }
+.wall-tile .wall-score { z-index: 2; }
 .wall-label {
   position: absolute;
   left: 5px;

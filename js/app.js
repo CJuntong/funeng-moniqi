@@ -336,39 +336,40 @@ function setView(view) {
   renderGrid();
 }
 
-// 地图预览台 + 墙面可见性网格（选手详情与准星预设详情共用）
+// 实战背景大图预览台 + 九宫格选择（选手详情与准星预设详情共用）
+// 大图与九宫格共用同一组 WALLS 背景；准星均为游戏内正常大小，大图可鼠标凑近放大
 function mapStageHtml(p) {
-  if (typeof MAPS === "undefined" || !MAPS.length) return "";
+  if (typeof WALLS === "undefined" || !WALLS.length) return "";
   return `
-      <div class="map-stage" id="map-stage" data-map="0" style="background-image:url('assets/地图/${MAPS[0]}')">
-        <div class="map-shade"></div>
+      <div class="map-stage" id="map-stage" data-wall="0" style="${WALLS[0].style}">
         <span class="ch-box" id="stage-ch" style="width:120px;height:120px;color:${chColorOf(p)}">${crosshairParts(p, 120, 3)}</span>
         <div class="map-lens" id="map-lens">
-          <div class="map-lens-inner" id="map-lens-inner" style="background-image:url('assets/地图/${MAPS[0]}')">
+          <div class="map-lens-inner" id="map-lens-inner" style="${WALLS[0].style}">
             <span class="ch-box lens-ch" style="width:120px;height:120px;color:${chColorOf(p)}">${crosshairParts(p, 120, 3)}</span>
           </div>
         </div>
       </div>
       <div class="map-controls">
-        <button class="mc-btn" data-act="prev" type="button">‹ 上张地图</button>
-        <span class="map-name" id="map-name">${MAPS[0].replace(/\.(png|jpg|jpeg|webp)$/i, "")}</span>
-        <button class="mc-btn" data-act="next" type="button">下张地图 ›</button>
-        <span class="map-hint">准星为游戏内正常大小 · 鼠标靠近它，放大镜会把细节放大</span>
+        <button class="mc-btn" data-act="prev" type="button">‹ 上个背景</button>
+        <span class="map-name" id="map-name">${WALLS[0].label}</span>
+        <button class="mc-btn" data-act="next" type="button">下个背景 ›</button>
+        <span class="map-hint">准星为游戏内正常大小 · 鼠标凑近大图即放大 · 点下方九宫格也能换背景</span>
       </div>`;
 }
 
 function wallsHtml(p) {
-  if (typeof MAPS === "undefined" || !MAPS.length) return "";
+  if (typeof WALLS === "undefined" || !WALLS.length) return "";
   const chL = hexLum(chColorOf(p));
   return `
       <div class="d-section">
         <h3>9 种实战背景可见性预览</h3>
+        <p class="d-import">准星为游戏内正常大小 · 鼠标凑近小格可放大细看 · 点击小格切换上方大图背景</p>
         <div class="wall-grid">
-          ${WALLS.map((w) => {
+          ${WALLS.map((w, i) => {
             const ratio = contrastRatio(chL, w.lum);
             const [tag, cls] = visibilityTag(ratio);
             return `
-          <div class="wall-tile" style="${w.style || ""}">
+          <div class="wall-tile${i === 0 ? " active" : ""}" data-wall="${i}" style="${w.style || ""}" title="${w.label} · 点击切换上方大图">
             <span class="ch-box" style="width:56px;height:56px;color:${chColorOf(p)}">${crosshairParts(p, 56, 3)}</span>
             <i class="wall-label">${w.label}</i>
             <b class="wall-score ${cls}">${tag} ${ratio.toFixed(1)}</b>
@@ -575,12 +576,26 @@ function initMapLens() {
   stage.addEventListener("mouseleave", () => { lens.style.opacity = "0"; });
 }
 
-// ---------- 9 种实战背景（借鉴参考站：不同墙面/光照下检验准星可见性） ----------
-// 前 3 项为真实游戏截图（裂变峡谷实机截图的不同区域裁切），其余为程序绘制的典型墙面材质
+// 切换大图预览台的实战背景（九宫格点击 / 前后按钮共用），九宫格高亮同步
+function setStageWall(i) {
+  const stage = $("#map-stage");
+  if (!stage || !WALLS.length) return;
+  const n = WALLS.length;
+  i = ((i % n) + n) % n;
+  stage.dataset.wall = i;
+  stage.style.cssText = WALLS[i].style;
+  const inner = $("#map-lens-inner");
+  if (inner) inner.style.cssText = WALLS[i].style;
+  $("#map-name").textContent = WALLS[i].label;
+  document.querySelectorAll(".wall-tile").forEach((t) => t.classList.toggle("active", +t.dataset.wall === i));
+}
+
+// ---------- 9 种实战背景（借鉴参考站：不同场景/光照下检验准星可见性） ----------
+// 前 3 项为互不相同的真实第一人称实机截图，亮度取自图片中心区域（准星实际所在处）的实测值
 const WALLS = [
-  { label: "实战 · 峡谷天际", lum: 0.5, style: "background-image:url('assets/地图/裂变峡谷.jpg');background-size:cover;background-position:center 8%" },
-  { label: "实战 · 烟雾中路", lum: 0.32, style: "background-image:url('assets/地图/裂变峡谷.jpg');background-size:cover;background-position:center 45%" },
-  { label: "实战 · 对枪贴墙", lum: 0.12, style: "background-image:url('assets/地图/裂变峡谷.jpg');background-size:cover;background-position:center 80%" },
+  { label: "实战 · 峡谷天际", lum: 0.111, style: "background-image:url('assets/地图/实战-峡谷天际.jpg');background-size:cover;background-position:center" },
+  { label: "实战 · 烟雾中路", lum: 0.332, style: "background-image:url('assets/地图/实战-烟雾中路.jpg');background-size:cover;background-position:center" },
+  { label: "实战 · 对枪贴墙", lum: 0.179, style: "background-image:url('assets/地图/实战-对枪贴墙.jpg');background-size:cover;background-position:center" },
   { label: "暗角", lum: 0.015, style: "background:linear-gradient(160deg,#1a2129,#0a0e12)" },
   { label: "白墙", lum: 0.66, style: "background:linear-gradient(160deg,#d6dde2,#a8b2ba)" },
   { label: "木箱", lum: 0.17, style: "background:repeating-linear-gradient(90deg,#8a6a48 0 14px,#755a3d 14px 17px)" },
@@ -755,16 +770,15 @@ function bindEvents() {
     if (act) {
       const stage = $("#map-stage");
       if (!stage) return;
-      let mapIdx = +stage.dataset.map || 0;
-      if (act.dataset.act === "prev") mapIdx = (mapIdx - 1 + MAPS.length) % MAPS.length;
-      if (act.dataset.act === "next") mapIdx = (mapIdx + 1) % MAPS.length;
-      stage.dataset.map = mapIdx;
-      stage.style.backgroundImage = `url('assets/地图/${MAPS[mapIdx]}')`;
-      const innerEl = $("#map-lens-inner");
-      if (innerEl) innerEl.style.backgroundImage = `url('assets/地图/${MAPS[mapIdx]}')`;
-      $("#map-name").textContent = MAPS[mapIdx].replace(/\.(png|jpg|jpeg|webp)$/i, "");
+      let idx = +stage.dataset.wall || 0;
+      if (act.dataset.act === "prev") idx -= 1;
+      if (act.dataset.act === "next") idx += 1;
+      setStageWall(idx);
       return;
     }
+    // 点击九宫格小格：切换上方大图背景
+    const tile = e.target.closest("[data-wall]");
+    if (tile) { setStageWall(+tile.dataset.wall); return; }
     const cfBtn = e.target.closest("[data-copyfull]");
     if (cfBtn) {
       const me = PLAYERS.find((x) => x.id === $("#modal-body").dataset.pid);
