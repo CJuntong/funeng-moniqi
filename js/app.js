@@ -337,15 +337,15 @@ function setView(view) {
 }
 
 // 实战背景大图预览台 + 九宫格选择（选手详情与准星预设详情共用）
-// 大图与九宫格共用同一组 WALLS 背景；准星均为游戏内正常大小，大图可鼠标凑近放大
+// 大图与九宫格共用同一组 WALLS 背景；准星均为游戏内真实大小（1080p 下 1 代码单位 ≈ 2px，k=2）
 function mapStageHtml(p) {
   if (typeof WALLS === "undefined" || !WALLS.length) return "";
   return `
       <div class="map-stage" id="map-stage" data-wall="0" style="${WALLS[0].style}">
-        <span class="ch-box" id="stage-ch" style="width:120px;height:120px;color:${chColorOf(p)}">${crosshairParts(p, 120, 3)}</span>
+        <span class="ch-box" id="stage-ch" style="width:120px;height:120px;color:${chColorOf(p)}">${crosshairParts(p, 120, 2)}</span>
         <div class="map-lens" id="map-lens">
           <div class="map-lens-inner" id="map-lens-inner" style="${WALLS[0].style}">
-            <span class="ch-box lens-ch" style="width:120px;height:120px;color:${chColorOf(p)}">${crosshairParts(p, 120, 3)}</span>
+            <span class="ch-box lens-ch" style="width:120px;height:120px;color:${chColorOf(p)}">${crosshairParts(p, 120, 2)}</span>
           </div>
         </div>
       </div>
@@ -370,7 +370,7 @@ function wallsHtml(p) {
             const [tag, cls] = visibilityTag(ratio);
             return `
           <div class="wall-tile${i === 0 ? " active" : ""}" data-wall="${i}" style="${w.style || ""}" title="${w.label} · 点击切换上方大图">
-            <span class="ch-box" style="width:56px;height:56px;color:${chColorOf(p)}">${crosshairParts(p, 56, 3)}</span>
+            <span class="ch-box" style="width:56px;height:56px;color:${chColorOf(p)}">${crosshairParts(p, 56, 2)}</span>
             <i class="wall-label">${w.label}</i>
             <b class="wall-score ${cls}">${tag} ${ratio.toFixed(1)}</b>
           </div>`;
