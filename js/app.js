@@ -84,9 +84,10 @@ function parseCross(code) {
 }
 
 function chColorOf(p) {
-  // 优先采用来源网站标注的颜色（与该站预览一致）；无标注时按代码参数推断
+  // 优先采用来源网站标注的颜色（与该站预览一致）；其次支持代码里的自定义颜色 u 参数；再按代码颜色编号推断
   if (p.crosshairColor && CROSS_COLORS[p.crosshairColor]) return CROSS_COLORS[p.crosshairColor];
   const kv = parseCross(p.crosshairCode);
+  if (kv.u && /^[0-9a-fA-F]{8}$/.test(kv.u)) return "#" + kv.u.slice(0, 6);
   if (kv.c !== undefined && CH_GAME_COLORS[+kv.c]) return CH_GAME_COLORS[+kv.c];
   return "#f5f7fa";
 }

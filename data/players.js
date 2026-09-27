@@ -77,7 +77,7 @@ const PLAYERS = [
     verified: true, source: "https://www.valorantcrosshairdb.com/zh/players/nephh/" },
 
   // ================= Wolves Esports（WOL） =================
-  { id: "yosemite", name: "yosemite", realName: "王磊", team: "WOL", teamFull: "Wolves Esports", region: "中国", role: "先锋",
+  { id: "yosemite", name: "yosemite", realName: "王磊", team: "WOL", teamFull: "Wolves Esports", region: "中国", role: "哨卫",
     dpi: 800, sens: 0.329,
     crosshairCode: "0;s;1;P;c;7;h;0;d;1;z;1;f;0;s;0;0t;1;0l;2;0o;2;0a;1;0f;0;1b;0;S;d;0", crosshairColor: "红",
     res: "1280×960", aspect: "4:3（填充）", monitorRes: "1920×1080",
@@ -105,12 +105,12 @@ const PLAYERS = [
     mouse: "Logitech G PRO X SUPERLIGHT 2 DEX", keyboard: "Wooting 60HE+", headset: "Razer BlackShark V3 Pro", mousepad: "Artisan Type-99 Mid Brown", monitor: "ZOWIE XL2566X+",
     verified: true, source: "https://www.valorantcrosshairdb.com/zh/players/siufatbb/" },
 
-  { id: "spring", name: "Spring", realName: "Lau Chak Kwan", team: "WOL", teamFull: "Wolves Esports", region: "中国", role: null,
-    dpi: 800, sens: 0.2,
-    crosshairCode: "0;P;h;0;f;0;0l;4;0o;0;0a;1;0f;0;1b;0", crosshairColor: "青",
-    res: "1280×960", aspect: "4:3（填充）", monitorRes: "1920×1080",
-    mouse: "Logitech G PRO X SUPERLIGHT 2", keyboard: "Wooting 60HE+", headset: "Razer BlackShark V3 Pro", mousepad: "Artisan Zero Mid Soft L Blue", monitor: "ZOWIE XL2546K",
-    verified: true, source: "https://www.valorantcrosshairdb.com/zh/players/spring/" },
+  { id: "spring", name: "Spring", realName: "刘俊霆", team: "WOL", teamFull: "Wolves Esports", region: "中国", role: "控场",
+    dpi: 1600, sens: 0.19,
+    crosshairCode: "0;s;1;P;c;5;o;1;d;1;0b;0;1t;0;1l;0;1o;0;1a;1;1m;0;1f;0;S;c;0;o;1", crosshairColor: "青",
+    res: "1920×1080", aspect: "16:9", monitorRes: "1920×1080",
+    mouse: "VAXEE NP-01S V3 Black", keyboard: "Wooting 60HE+", headset: "HyperX Cloud III Wireless", mousepad: "VAXEE PD140+", monitor: "ZOWIE XL2566X+",
+    verified: true, source: "https://prosettings.net/players/spring/" },
 
   { id: "s1mon", name: "S1Mon", realName: "郑雅文", team: "WOL", teamFull: "Wolves Esports", region: "中国", role: null,
     dpi: 400, sens: 0.5,
@@ -205,6 +205,136 @@ const PLAYERS = [
     res: "1280×960", aspect: "4:3（填充）", monitorRes: "1920×1080",
     mouse: "Logitech G PRO X SUPERLIGHT 2", keyboard: "Wooting 60HE+", headset: "Razer BlackShark V3 Pro", mousepad: "Artisan Type-99 Mid Brown", monitor: "ZOWIE XL2566X+",
     verified: true, source: "https://www.valorantcrosshairdb.com/zh/players/youze/" },
+
+  // ================= WOL / AG 补充名单（vlr.gg 现役阵容，设置待核实） =================
+  { id: "glacier", name: "glacier", realName: "梁哲恺", team: "WOL", teamFull: "Wolves Esports", region: "中国", role: null,
+    dpi: null, sens: null, crosshairCode: null, crosshairColor: null, res: null, aspect: null, monitorRes: null,
+    mouse: null, keyboard: null, headset: null, mousepad: null, monitor: null,
+    verified: false, source: "https://www.vlr.gg/team/13790/wolves-esports" },
+
+  { id: "deryeon", name: "Deryeon", team: "WOL", teamFull: "Wolves Esports", region: "中国", role: null,
+    dpi: 1600, sens: 0.13,
+    crosshairCode: "0;P;c;5;h;0;0l;2;0o;2;0a;1;0f;0;1b;0", crosshairColor: "青",
+    res: "1440×1080", aspect: "4:3", monitorRes: "1920×1080",
+    mouse: "Razer Viper V3 Pro Faker Edition", keyboard: "Razer Huntsman Mini", headset: "HyperX Cloud II", mousepad: "Artisan Ninja FX Zero Soft Black", monitor: "ZOWIE XL2566X+",
+    verified: true, source: "https://prosettings.net/players/deryeon/" },
+
+  { id: "aluba", name: "aluba", realName: "钟皓钧", team: "WOL", teamFull: "Wolves Esports", region: "中国", role: null,
+    dpi: null, sens: null, crosshairCode: null, crosshairColor: null, res: null, aspect: null, monitorRes: null,
+    mouse: null, keyboard: null, headset: null, mousepad: null, monitor: null,
+    verified: false, source: "https://www.vlr.gg/team/13790/wolves-esports" },
+
+  { id: "nothing", name: "nothing", realName: "谢君正", team: "WOL", teamFull: "Wolves Esports", region: "中国", role: null,
+    dpi: null, sens: null, crosshairCode: null, crosshairColor: null, res: null, aspect: null, monitorRes: null,
+    mouse: null, keyboard: null, headset: null, mousepad: null, monitor: null,
+    verified: false, source: "https://www.vlr.gg/team/13790/wolves-esports" },
+
+  { id: "f4ngeer", name: "f4ngeer", team: "AG", teamFull: "All Gamers", region: "中国", role: null,
+    dpi: 1600, sens: 0.1,
+    crosshairCode: "0;s;1;P;h;0;0l;3;0o;2;0a;1;0f;0;1b;0;S;s;0.591;o;1", crosshairColor: "白",
+    res: "1920×1080", aspect: "16:9", monitorRes: "1920×1080",
+    mouse: "Logitech G Pro X2 SUPERSTRIKE Lunar Eclipse", keyboard: "Wooting 60HE+", headset: "HyperX Cloud III", mousepad: "Artisan Ninja FX Zero Soft Orange", monitor: "Alienware AW2523HF",
+    verified: true, source: "https://prosettings.net/players/f4ngeer/" },
+
+  { id: "shr1mp", name: "Shr1mp", realName: "杨勇", team: "AG", teamFull: "All Gamers", region: "中国", role: "先锋",
+    dpi: 800, sens: 0.786,
+    crosshairCode: null, crosshairColor: null, res: null, aspect: null, monitorRes: null,
+    mouse: "Razer Viper V3 Pro", keyboard: null, headset: null, mousepad: null, monitor: null,
+    verified: false, source: "https://www.vlr.gg/team/1119/all-gamers" },
+
+  { id: "k1ra", name: "K1ra", realName: "黄志豪", team: "AG", teamFull: "All Gamers", region: "中国", role: null,
+    dpi: 800, sens: 0.27,
+    crosshairCode: "0;P;c;1;h;0;f;0;0l;4;0o;0;0a;1;0f;0;1b;0", crosshairColor: "绿",
+    res: "1920×1080", aspect: "16:9", monitorRes: "1920×1080",
+    mouse: "VAXEE NP-01S V3 Pink", keyboard: "Wooting 60HE v2 Black", headset: "Razer BlackShark V2 Pro Black", mousepad: "Artisan Ninja FX Zero Soft Black", monitor: "ZOWIE XL2566K",
+    verified: true, source: "https://prosettings.net/players/k1ra/" },
+
+  { id: "bai", name: "Bai", realName: "张泽洋", team: "AG", teamFull: "All Gamers", region: "中国", role: null,
+    dpi: null, sens: null, crosshairCode: null, crosshairColor: null, res: null, aspect: null, monitorRes: null,
+    mouse: null, keyboard: null, headset: null, mousepad: null, monitor: null,
+    verified: false, source: "https://www.vlr.gg/team/1119/all-gamers" },
+
+  { id: "iamgrq", name: "iamgrq", realName: "高锐琦", team: "AG", teamFull: "All Gamers", region: "中国", role: null,
+    dpi: 800, sens: 0.4,
+    crosshairCode: null, crosshairColor: null, res: null, aspect: null, monitorRes: null,
+    mouse: null, keyboard: null, headset: null, mousepad: null, monitor: null,
+    verified: false, source: "https://zh.moegirl.org.cn/高锐琦" },
+
+  // ================= Dragon Ranger Gaming（DRG） =================
+  { id: "vo0kashu", name: "vo0kashu", team: "DRG", teamFull: "Dragon Ranger Gaming", region: "中国", role: "哨卫",
+    dpi: 800, sens: 0.211,
+    crosshairCode: "0;P;c;7;o;1;f;0;s;0;0t;1;0l;2;0o;2;0a;1;0f;0;1b;0", crosshairColor: "红",
+    res: "1280×960", aspect: "4:3", monitorRes: "1920×1080",
+    mouse: "Logitech G Pro X2 SUPERSTRIKE Lunar Eclipse", keyboard: "Wooting 60HE+", headset: "Razer BlackShark V2 Pro White", mousepad: "VAXEE PD250", monitor: "ZOWIE XL2566K",
+    verified: true, source: "https://prosettings.net/players/vo0kashu/" },
+
+  { id: "flex1n", name: "Flex1n", realName: "罗瑞", team: "DRG", teamFull: "Dragon Ranger Gaming", region: "中国", role: "控场",
+    dpi: 800, sens: 0.473,
+    crosshairCode: "0;P;c;8;u;7FFFD4FF;h;0;b;1;0l;0;0o;2;0a;1;0e;0.3;1l;4;1o;2;1a;1;1m;0;1e;0.3", crosshairColor: null,
+    res: "1920×1080", aspect: "16:9", monitorRes: "1920×1080",
+    mouse: "Logitech G PRO X Superlight 2 Wireless", keyboard: "Wooting 60HE", headset: "HyperX Cloud Flight S", mousepad: "BenQ Zowie G-SR 2", monitor: "BenQ Zowie XL2566K",
+    verified: false, source: "https://www.prosettings.gg/valorant/flex1n/" },
+
+  { id: "nicc", name: "Nicc", realName: "邵逸群", team: "DRG", teamFull: "Dragon Ranger Gaming", region: "中国", role: null,
+    dpi: 800, sens: 0.27,
+    crosshairCode: "0;P;c;1;o;1;f;0;0l;5;0a;0.5;0f;0;1b;0", crosshairColor: "绿",
+    res: "1920×1080", aspect: "16:9", monitorRes: "1920×1080",
+    mouse: "Pulsar X2N Crazylight Medium", keyboard: "Wooting 60HE v2 Black", headset: "Razer BlackShark V2 Pro Black", mousepad: "Artisan Ninja FX Zero Mid Orange", monitor: "ZOWIE XL2566K",
+    verified: true, source: "https://prosettings.net/players/nicc/" },
+
+  { id: "life", name: "Life", realName: "瞿东豪", team: "DRG", teamFull: "Dragon Ranger Gaming", region: "中国", role: "决斗者",
+    dpi: 1600, sens: 0.1,
+    crosshairCode: null, crosshairColor: null,
+    res: null, aspect: null, monitorRes: null,
+    mouse: "Logitech G Pro X Superlight 2", keyboard: null, headset: null, mousepad: null, monitor: null,
+    verified: false, source: "https://zh.moegirl.org.cn/瞿东豪" },
+
+  { id: "spiritz1", name: "SpiritZ1", realName: "林定宇", team: "DRG", teamFull: "Dragon Ranger Gaming", region: "中国", role: null,
+    dpi: null, sens: null,
+    crosshairCode: null, crosshairColor: null,
+    res: null, aspect: null, monitorRes: null,
+    mouse: null, keyboard: null, headset: null, mousepad: null, monitor: null,
+    verified: false, source: "https://www.vlr.gg/team/11981/dragon-ranger-gaming" },
+
+  { id: "verse", name: "Verse", realName: "周子钧", team: "DRG", teamFull: "Dragon Ranger Gaming", region: "中国", role: null,
+    dpi: null, sens: null,
+    crosshairCode: null, crosshairColor: null,
+    res: null, aspect: null, monitorRes: null,
+    mouse: null, keyboard: null, headset: null, mousepad: null, monitor: null,
+    verified: false, source: "https://www.vlr.gg/team/11981/dragon-ranger-gaming" },
+
+  // ================= Titan Esports Club（TEC） =================
+  { id: "haodong", name: "Haodong", realName: "郭浩东", team: "TEC", teamFull: "Titan Esports Club", region: "中国", role: "控场",
+    dpi: 400, sens: 0.69,
+    crosshairCode: "0;s;1;P;c;1;o;1;m;1;0t;1;0l;2;0v;3;0g;1;0a;1;0f;0;1b;0;S;c;5;o;1", crosshairColor: "绿",
+    res: "1920×1080", aspect: "16:9", monitorRes: "1920×1080",
+    mouse: "Logitech G Pro X Superlight 2 Magenta", keyboard: "Wooting 60HE+", headset: "Razer BlackShark V3 Pro White", mousepad: "ZOWIE G-SR-SE BLUE II", monitor: "ZOWIE XL2566K",
+    verified: true, source: "https://prosettings.net/players/haodong/" },
+
+  { id: "lucas", name: "lucas", realName: "路昀昆", team: "TEC", teamFull: "Titan Esports Club", region: "中国", role: null,
+    dpi: null, sens: null, crosshairCode: null, crosshairColor: null, res: null, aspect: null, monitorRes: null,
+    mouse: null, keyboard: null, headset: null, mousepad: null, monitor: null,
+    verified: false, source: "https://www.vlr.gg/team/14137/titan-esports-club" },
+
+  { id: "dynamite", name: "Dynamite", realName: "赵梓浩", team: "TEC", teamFull: "Titan Esports Club", region: "中国", role: null,
+    dpi: null, sens: null, crosshairCode: null, crosshairColor: null, res: null, aspect: null, monitorRes: null,
+    mouse: null, keyboard: null, headset: null, mousepad: null, monitor: null,
+    verified: false, source: "https://www.vlr.gg/team/14137/titan-esports-club" },
+
+  { id: "ra1ny", name: "ra1ny", realName: "陈葆桓", team: "TEC", teamFull: "Titan Esports Club", region: "中国", role: null,
+    dpi: null, sens: null, crosshairCode: null, crosshairColor: null, res: null, aspect: null, monitorRes: null,
+    mouse: null, keyboard: null, headset: null, mousepad: null, monitor: null,
+    verified: false, source: "https://www.vlr.gg/team/14137/titan-esports-club" },
+
+  { id: "coco", name: "Coco", realName: "丁达建", team: "TEC", teamFull: "Titan Esports Club", region: "中国", role: null,
+    dpi: null, sens: null, crosshairCode: null, crosshairColor: null, res: null, aspect: null, monitorRes: null,
+    mouse: null, keyboard: null, headset: null, mousepad: null, monitor: null,
+    verified: false, source: "https://www.vlr.gg/team/14137/titan-esports-club" },
+
+  { id: "spitfires", name: "Spitfires", realName: "辛明阳", team: "TEC", teamFull: "Titan Esports Club", region: "中国", role: null,
+    dpi: null, sens: null, crosshairCode: null, crosshairColor: null, res: null, aspect: null, monitorRes: null,
+    mouse: null, keyboard: null, headset: null, mousepad: null, monitor: null,
+    verified: false, source: "https://www.vlr.gg/team/14137/titan-esports-club" },
 
   // ================= 其他赛区（演示占位数据，verified: false，待核实） =================
   { id: "boaster", name: "Boaster", team: "FNC", teamFull: "Fnatic", region: "EMEA", role: "控场",
