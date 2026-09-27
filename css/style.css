@@ -189,9 +189,34 @@ body {
   inset: 0;
   background: repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.08) 0 10px, transparent 10px 22px);
 }
+.avatar-photo {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 96px;
+  object-fit: cover;
+  object-position: center 18%;
+  z-index: 1;
+  border-right: 1px solid rgba(0, 0, 0, 0.3);
+}
+.card-avatar.big .avatar-photo { width: 150px; }
+
+.avatar-logo {
+  position: absolute;
+  right: 2%;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 96%;
+  max-width: 46%;
+  object-fit: contain;
+  opacity: 0.32;
+  z-index: 0;
+}
+
 .avatar-ghost {
   position: absolute;
-  right: 2px;
+  left: 8px;
   bottom: -30px;
   font-family: var(--mono);
   font-size: 110px;

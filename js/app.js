@@ -23,7 +23,7 @@ const REGIONS = ["中国", "美洲", "EMEA", "太平洋"];
 const state = { search: "", region: "", team: "", role: "", tier: "", color: "", favOnly: false };
 
 // ---------- 可视化头像 ----------
-// 统一风格：队伍主题色渐变 + 选手ID首字母 + 几何纹理（程序生成，离线可用）
+// 统一风格：队伍主题色渐变 + 选手照片（如有）+ 战队标志背景水印（如有）+ 首字母兜底
 const TEAM_COLORS = {
   EDG: ["#ff4655", "#6e1620"], TE: ["#f7c948", "#6b5310"], BLG: ["#4da6ff", "#123a66"],
   FPX: ["#ff6a3d", "#6e2413"], WOL: ["#9fb3c2", "#2b3d4f"], DRG: ["#ffb14d", "#6e4a10"],
@@ -33,6 +33,10 @@ const TEAM_COLORS = {
   FNC: ["#ff5900", "#5a2400"], PRX: ["#ff4d88", "#5a1a33"], SEN: ["#ff4655", "#661a1a"],
   DRX: ["#4da6ff", "#123a66"], GEN: ["#e8c35a", "#4a3c12"],
 };
+
+// 照片文件名大小写不敏感匹配（vlr 别名大小写与显示名可能不同）
+const PHOTO_FILE = {};
+(typeof PHOTOS !== "undefined" ? PHOTOS : []).forEach((a) => { PHOTO_FILE[a.toLowerCase()] = a; });
 
 function hashStr(s) {
   let h = 0;
@@ -44,11 +48,18 @@ function avatarHtml(p, big = false) {
   const [c1, c2] = TEAM_COLORS[p.team] || ["#3d5871", "#16222e"];
   const initials = (p.name.replace(/[^\p{L}\p{N}]/gu, "").slice(0, 2) || "??").toUpperCase();
   const angle = 105 + (hashStr(p.id || p.name) % 5) * 14;   // 同队不同选手，纹理角度略有差异
+  const photoAlias = PHOTO_FILE[p.name.toLowerCase()];
+  const photo = photoAlias
+    ? `<img class="avatar-photo" src="assets/选手照片/${photoAlias}.png" alt="${p.name}" onerror="this.remove()">`
+    : "";
+  const logo = `<img class="avatar-logo" src="assets/战队标志/${p.team}.png" alt="" onerror="this.remove()">`;
   return `
     <div class="card-avatar${big ? " big" : ""}" style="background:linear-gradient(${angle}deg, ${c1}, ${c2})">
+      ${logo}
       <span class="avatar-ghost">${initials[0]}</span>
       <span class="avatar-pattern"></span>
       <span class="avatar-initials">${initials}</span>
+      ${photo}
       <span class="avatar-team">${p.team}</span>
     </div>`;
 }

@@ -1,0 +1,330 @@
+{
+  "teams": {
+    "EDG": "assets/战队标志/EDG.png",
+    "BLG": "assets/战队标志/BLG.png",
+    "FPX": "assets/战队标志/FPX.png",
+    "DRG": "assets/战队标志/DRG.png",
+    "NOVA": "assets/战队标志/NOVA.png",
+    "TE": "assets/战队标志/TE.png",
+    "JDG": "assets/战队标志/JDG.png",
+    "XLG": "assets/战队标志/XLG.png",
+    "WOL": "assets/战队标志/WOL.png",
+    "TEC": "assets/战队标志/TEC.png",
+    "AG": "assets/战队标志/AG.png",
+    "TYLOO": "assets/战队标志/TYLOO.png"
+  },
+  "photos": [
+    {
+      "alias": "nobody",
+      "file": "assets/选手照片/nobody.png"
+    },
+    {
+      "alias": "ZmjjKK",
+      "file": "assets/选手照片/ZmjjKK.png"
+    },
+    {
+      "alias": "CHICHOO",
+      "file": "assets/选手照片/CHICHOO.png"
+    },
+    {
+      "alias": "Smoggy",
+      "file": "assets/选手照片/Smoggy.png"
+    },
+    {
+      "alias": "Jieni7",
+      "file": "assets/选手照片/Jieni7.png"
+    },
+    {
+      "alias": "stew",
+      "file": "assets/选手照片/stew.png"
+    },
+    {
+      "alias": "zjc",
+      "file": "assets/选手照片/zjc.png"
+    },
+    {
+      "alias": "Autumn",
+      "file": "assets/选手照片/Autumn.png"
+    },
+    {
+      "alias": "Indigo",
+      "file": "assets/选手照片/Indigo.png"
+    },
+    {
+      "alias": "whzy",
+      "file": "assets/选手照片/whzy.png"
+    },
+    {
+      "alias": "rushia",
+      "file": "assets/选手照片/rushia.png"
+    },
+    {
+      "alias": "nephh",
+      "file": "assets/选手照片/nephh.png"
+    },
+    {
+      "alias": "Knight",
+      "file": "assets/选手照片/Knight.png"
+    },
+    {
+      "alias": "FT",
+      "file": "assets/选手照片/FT.png"
+    },
+    {
+      "alias": "Levius",
+      "file": "assets/选手照片/Levius.png"
+    },
+    {
+      "alias": "Gandolf",
+      "file": "assets/选手照片/Gandolf.png"
+    },
+    {
+      "alias": "Anaks",
+      "file": "assets/选手照片/Anaks.png"
+    },
+    {
+      "alias": "Jexen",
+      "file": "assets/选手照片/Jexen.png"
+    },
+    {
+      "alias": "Rain",
+      "file": "assets/选手照片/Rain.png"
+    },
+    {
+      "alias": "AAAAY",
+      "file": "assets/选手照片/AAAAY.png"
+    },
+    {
+      "alias": "coconut",
+      "file": "assets/选手照片/coconut.png"
+    },
+    {
+      "alias": "9hr",
+      "file": "assets/选手照片/9hr.png"
+    },
+    {
+      "alias": "LEGIJA",
+      "file": "assets/选手照片/LEGIJA.png"
+    },
+    {
+      "alias": "York",
+      "file": "assets/选手照片/York.png"
+    },
+    {
+      "alias": "Nicc",
+      "file": "assets/选手照片/Nicc.png"
+    },
+    {
+      "alias": "Flex1n",
+      "file": "assets/选手照片/Flex1n.png"
+    },
+    {
+      "alias": "Life",
+      "file": "assets/选手照片/Life.png"
+    },
+    {
+      "alias": "vo0kashu",
+      "file": "assets/选手照片/vo0kashu.png"
+    },
+    {
+      "alias": "SpiritZ1",
+      "file": "assets/选手照片/SpiritZ1.png"
+    },
+    {
+      "alias": "NaThanD",
+      "file": "assets/选手照片/NaThanD.png"
+    },
+    {
+      "alias": "1t",
+      "file": "assets/选手照片/1t.png"
+    },
+    {
+      "alias": "qiutiaN",
+      "file": "assets/选手照片/qiutiaN.png"
+    },
+    {
+      "alias": "cb",
+      "file": "assets/选手照片/cb.png"
+    },
+    {
+      "alias": "Ezeir",
+      "file": "assets/选手照片/Ezeir.png"
+    },
+    {
+      "alias": "GuanG",
+      "file": "assets/选手照片/GuanG.png"
+    },
+    {
+      "alias": "GREEN",
+      "file": "assets/选手照片/GREEN.png"
+    },
+    {
+      "alias": "24K",
+      "file": "assets/选手照片/24K.png"
+    },
+    {
+      "alias": "LuoK1ng",
+      "file": "assets/选手照片/LuoK1ng.png"
+    },
+    {
+      "alias": "Kai",
+      "file": "assets/选手照片/Kai.png"
+    },
+    {
+      "alias": "FengF",
+      "file": "assets/选手照片/FengF.png"
+    },
+    {
+      "alias": "deLb",
+      "file": "assets/选手照片/deLb.png"
+    },
+    {
+      "alias": "Abo",
+      "file": "assets/选手照片/Abo.png"
+    },
+    {
+      "alias": "destroyeR",
+      "file": "assets/选手照片/destroyeR.png"
+    },
+    {
+      "alias": "Yiyee",
+      "file": "assets/选手照片/Yiyee.png"
+    },
+    {
+      "alias": "Viva",
+      "file": "assets/选手照片/Viva.png"
+    },
+    {
+      "alias": "jkuro",
+      "file": "assets/选手照片/jkuro.png"
+    },
+    {
+      "alias": "zhe",
+      "file": "assets/选手照片/zhe.png"
+    },
+    {
+      "alias": "Yuicaw",
+      "file": "assets/选手照片/Yuicaw.png"
+    },
+    {
+      "alias": "BerLIN",
+      "file": "assets/选手照片/BerLIN.png"
+    },
+    {
+      "alias": "bail",
+      "file": "assets/选手照片/bail.png"
+    },
+    {
+      "alias": "WsLeo",
+      "file": "assets/选手照片/WsLeo.png"
+    },
+    {
+      "alias": "Lysoar",
+      "file": "assets/选手照片/Lysoar.png"
+    },
+    {
+      "alias": "Rarga",
+      "file": "assets/选手照片/Rarga.png"
+    },
+    {
+      "alias": "happywei",
+      "file": "assets/选手照片/happywei.png"
+    },
+    {
+      "alias": "hvoya",
+      "file": "assets/选手照片/hvoya.png"
+    },
+    {
+      "alias": "Fayde",
+      "file": "assets/选手照片/Fayde.png"
+    },
+    {
+      "alias": "yosemite",
+      "file": "assets/选手照片/yosemite.png"
+    },
+    {
+      "alias": "Spring",
+      "file": "assets/选手照片/Spring.png"
+    },
+    {
+      "alias": "Deryeon",
+      "file": "assets/选手照片/Deryeon.png"
+    },
+    {
+      "alias": "aluba",
+      "file": "assets/选手照片/aluba.png"
+    },
+    {
+      "alias": "alexRr",
+      "file": "assets/选手照片/alexRr.png"
+    },
+    {
+      "alias": "Haodong",
+      "file": "assets/选手照片/Haodong.png"
+    },
+    {
+      "alias": "Dynamite",
+      "file": "assets/选手照片/Dynamite.png"
+    },
+    {
+      "alias": "Coco",
+      "file": "assets/选手照片/Coco.png"
+    },
+    {
+      "alias": "Spitfires",
+      "file": "assets/选手照片/Spitfires.png"
+    },
+    {
+      "alias": "AfteR",
+      "file": "assets/选手照片/AfteR.png"
+    },
+    {
+      "alias": "Muggle",
+      "file": "assets/选手照片/Muggle.png"
+    },
+    {
+      "alias": "3water",
+      "file": "assets/选手照片/3water.png"
+    },
+    {
+      "alias": "Shr1mp",
+      "file": "assets/选手照片/Shr1mp.png"
+    },
+    {
+      "alias": "K1ra",
+      "file": "assets/选手照片/K1ra.png"
+    },
+    {
+      "alias": "Bai",
+      "file": "assets/选手照片/Bai.png"
+    },
+    {
+      "alias": "SiuFatBB",
+      "file": "assets/选手照片/SiuFatBB.png"
+    },
+    {
+      "alias": "Scales",
+      "file": "assets/选手照片/Scales.png"
+    },
+    {
+      "alias": "slowly",
+      "file": "assets/选手照片/slowly.png"
+    },
+    {
+      "alias": "hypnotizing",
+      "file": "assets/选手照片/hypnotizing.png"
+    },
+    {
+      "alias": "Billyo",
+      "file": "assets/选手照片/Billyo.png"
+    },
+    {
+      "alias": "sword9",
+      "file": "assets/选手照片/sword9.png"
+    },
+    {
+      "alias": "Ominous",
+      "file": "assets/选手照片/Ominous.png"
+    }
+  ]
+}
