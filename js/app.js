@@ -20,7 +20,7 @@ const CROSS_COLORS = {
 
 const REGIONS = ["中国", "美洲", "EMEA", "太平洋"];
 
-const state = { search: "", region: "", team: "", role: "", tier: "", color: "", favOnly: false };
+const state = { search: "", view: "players", region: "", team: "", role: "", tier: "", color: "", favOnly: false };
 
 // ---------- 可视化头像 ----------
 // 统一风格：队伍主题色渐变 + 选手照片（如有）+ 战队标志背景水印（如有）+ 首字母兜底
@@ -30,6 +30,8 @@ const TEAM_COLORS = {
   AG: ["#35d0a5", "#0d4a3a"], TEC: ["#b58cff", "#3a2466"], JDG: ["#ff5c5c", "#661a1a"],
   TYLOO: ["#ff8566", "#66291a"], XLG: ["#5ee0ff", "#0e4a5a"], NOVA: ["#ffd166", "#5a4712"],
   自由人: ["#9aa7b1", "#39434c"],
+  虎牙: ["#ffa51f", "#7a4a10"], 斗鱼: ["#ff5d23", "#6e250e"], 抖音: ["#25f4ee", "#0e2a2b"],
+  B站: ["#fb7299", "#6d1f35"], 快手: ["#ff7e12", "#6e3a08"],
   FNC: ["#ff5900", "#5a2400"], PRX: ["#ff4d88", "#5a1a33"], SEN: ["#ff4655", "#661a1a"],
   DRX: ["#4da6ff", "#123a66"], GEN: ["#e8c35a", "#4a3c12"],
 };
@@ -197,11 +199,8 @@ function initSelects() {
 }
 
 // ---------- 卡片渲染 ----------
-function renderGrid() {
-  const list = filteredPlayers();
-  $("#count").innerHTML = `共 <b>${list.length}</b> 名选手`;
-  $("#empty").hidden = list.length > 0;
-  $("#grid").innerHTML = list.map((p) => `
+function cardHtml(p) {
+  return `
     <article class="card" data-id="${p.id}">
       ${avatarHtml(p)}
       <button class="card-star ${isFav(p.id) ? "on" : ""}" data-star="${p.id}"
@@ -219,12 +218,34 @@ function renderGrid() {
       </div>
       </div>
     </article>
-  `).join("");
+  `;
+}
+
+function renderGrid() {
+  const isSt = state.view === "streamers";
+  const list = isSt ? streamerList() : filteredPlayers();
+  $("#count").innerHTML = isSt ? `共 <b>${list.length}</b> 位主播` : `共 <b>${list.length}</b> 名选手`;
+  $("#empty").textContent = isSt ? "主播热门准星数据采集中，敬请期待…" : "没有符合条件的选手，试试放宽筛选条件。";
+  $("#empty").hidden = list.length > 0;
+  $("#grid").innerHTML = list.map(cardHtml).join("");
+}
+
+// ---------- 主播视图 ----------
+function streamerList() {
+  const q = state.search.trim().toLowerCase();
+  return STREAMERS.filter((s) => !q || `${s.name} ${s.team}`.toLowerCase().includes(q));
+}
+
+function setView(view) {
+  state.view = view;
+  document.querySelectorAll(".nav-links a").forEach((a) => a.classList.toggle("active", a.dataset.view === view));
+  ["f-region", "f-team", "f-role", "f-tier", "f-color"].forEach((id) => { $(`#${id}`).style.display = view === "streamers" ? "none" : ""; });
+  renderGrid();
 }
 
 // ---------- 详情弹窗 ----------
 function openDetail(id) {
-  const p = PLAYERS.find((x) => x.id === id);
+  const p = PLAYERS.find((x) => x.id === id) || STREAMERS.find((x) => x.id === id);
   if (!p) return;
   const fav = isFav(p.id);
   const chL = hexLum(chColorOf(p));
@@ -544,6 +565,15 @@ function bindEvents() {
     renderFavButton();
     renderGrid();
   });
+
+  // 导航：首页 / 选手库 / 热门准星 视图切换
+  document.querySelectorAll(".nav-links a").forEach((a) =>
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (a.dataset.view) setView(a.dataset.view);
+      const target = a.getAttribute("href") === "#top" ? "#top" : "#browse";
+      document.querySelector(target)?.scrollIntoView({ behavior: "smooth" });
+    }));
 
   // Hero 区按钮：锚点滚动 / 收藏视图 / 即将上线提示
   document.querySelectorAll("[data-scroll]").forEach((b) =>
