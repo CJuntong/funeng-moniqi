@@ -259,20 +259,31 @@ function openDetail(id) {
       ${p.crosshairCode ? `<p class="d-import">导入方法：游戏内 → 设置 → 准星 → 导入准星代码 → 粘贴后确认</p>
 
       ${typeof MAPS !== "undefined" && MAPS.length ? `
-      <div class="map-stage" id="map-stage" data-map="0" style="background-image:url('assets/地图/${MAPS[0]}.png')">
+      <div class="map-stage" id="map-stage" data-map="0" style="background-image:url('assets/地图/${MAPS[0]}')">
         <div class="map-shade"></div>
         <span class="ch-box" id="stage-ch" style="width:120px;height:120px;color:${chColorOf(p)}">${crosshairParts(p, 120, 3)}</span>
         <div class="map-lens" id="map-lens">
-          <div class="map-lens-inner" id="map-lens-inner" style="background-image:url('assets/地图/${MAPS[0]}.png')">
+          <div class="map-lens-inner" id="map-lens-inner" style="background-image:url('assets/地图/${MAPS[0]}')">
             <span class="ch-box lens-ch" style="width:120px;height:120px;color:${chColorOf(p)}">${crosshairParts(p, 120, 3)}</span>
           </div>
         </div>
       </div>
       <div class="map-controls">
         <button class="mc-btn" data-act="prev" type="button">‹ 上张地图</button>
-        <span class="map-name" id="map-name">${MAPS[0]}</span>
+        <span class="map-name" id="map-name">${MAPS[0].replace(/\.(png|jpg|jpeg|webp)$/i, "")}</span>
         <button class="mc-btn" data-act="next" type="button">下张地图 ›</button>
         <span class="map-hint">准星为游戏内正常大小 · 鼠标靠近它，放大镜会把细节放大</span>
+      </div>
+
+      <div class="d-section">
+        <h3>9 种实战背景可见性预览</h3>
+        <div class="wall-grid">
+          ${WALLS.map((w) => `
+          <div class="wall-tile ${w.cls || ""}" style="${w.style || ""}">
+            <span class="ch-box" style="width:56px;height:56px;color:${chColorOf(p)}">${crosshairParts(p, 56, 3)}</span>
+            <i class="wall-label">${w.label}</i>
+          </div>`).join("")}
+        </div>
       </div>` : ""}` : ""}
     </div>
 
@@ -387,6 +398,20 @@ function initMapLens() {
   stage.addEventListener("mouseleave", () => { lens.style.opacity = "0"; });
 }
 
+// ---------- 9 种实战背景（借鉴参考站：不同墙面/光照下检验准星可见性） ----------
+// 前 3 项为真实游戏截图（裂变峡谷实机截图的不同区域裁切），其余为程序绘制的典型墙面材质
+const WALLS = [
+  { label: "实战 · 峡谷天际", style: "background-image:url('assets/地图/裂变峡谷.jpg');background-size:cover;background-position:center 8%" },
+  { label: "实战 · 烟雾中路", style: "background-image:url('assets/地图/裂变峡谷.jpg');background-size:cover;background-position:center 45%" },
+  { label: "实战 · 对枪贴墙", style: "background-image:url('assets/地图/裂变峡谷.jpg');background-size:cover;background-position:center 80%" },
+  { label: "暗角", style: "background:linear-gradient(160deg,#1a2129,#0a0e12)" },
+  { label: "白墙", style: "background:linear-gradient(160deg,#d6dde2,#a8b2ba)" },
+  { label: "木箱", style: "background:repeating-linear-gradient(90deg,#8a6a48 0 14px,#755a3d 14px 17px)" },
+  { label: "金属", style: "background:linear-gradient(160deg,#4a5560,#363f48)" },
+  { label: "烟雾", style: "background:radial-gradient(circle at 42% 42%,#a8b4bd,#68737c)" },
+  { label: "霓虹", style: "background:linear-gradient(160deg,#3b2a5a,#1d1430)" },
+];
+
 // ---------- 事件绑定 ----------
 function bindEvents() {
   $("#search").addEventListener("input", (e) => { state.search = e.target.value; renderGrid(); });
@@ -429,10 +454,10 @@ function bindEvents() {
       if (act.dataset.act === "prev") mapIdx = (mapIdx - 1 + MAPS.length) % MAPS.length;
       if (act.dataset.act === "next") mapIdx = (mapIdx + 1) % MAPS.length;
       stage.dataset.map = mapIdx;
-      stage.style.backgroundImage = `url('assets/地图/${MAPS[mapIdx]}.png')`;
+      stage.style.backgroundImage = `url('assets/地图/${MAPS[mapIdx]}')`;
       const innerEl = $("#map-lens-inner");
-      if (innerEl) innerEl.style.backgroundImage = `url('assets/地图/${MAPS[mapIdx]}.png')`;
-      $("#map-name").textContent = MAPS[mapIdx];
+      if (innerEl) innerEl.style.backgroundImage = `url('assets/地图/${MAPS[mapIdx]}')`;
+      $("#map-name").textContent = MAPS[mapIdx].replace(/\.(png|jpg|jpeg|webp)$/i, "");
       return;
     }
     const copyBtn = e.target.closest("[data-copy]");

@@ -433,6 +433,34 @@ body {
 .map-name { font-size: 13px; font-weight: 700; color: var(--accent); min-width: 64px; text-align: center; }
 .mc-label { font-size: 12px; color: var(--text-dim); margin-left: 6px; }
 
+/* ---------- 9 种实战背景可见性预览 ---------- */
+.wall-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+.wall-tile {
+  position: relative;
+  height: 84px;
+  border-radius: 4px;
+  border: 1px solid var(--panel-line);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.wall-tile .ch-box { background: transparent; border: none; }
+.wall-label {
+  position: absolute;
+  left: 5px;
+  bottom: 3px;
+  font-size: 10px;
+  font-style: normal;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  opacity: 0.9;
+}
+
 .d-src { list-style: none; display: grid; gap: 4px; }
 .d-src a { color: #7fb3d5; font-size: 12px; word-break: break-all; text-decoration: none; }
 .d-src a:hover { text-decoration: underline; }
