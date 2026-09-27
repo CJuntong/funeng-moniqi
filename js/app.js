@@ -133,8 +133,9 @@ function chColorOf(p) {
   return "#f5f7fa";
 }
 
-// 把准星代码画成图形；size=预览盒边长(px)，k=每个游戏单位的像素数（地图预览台用大值放大）
-function crosshairParts(p, size, k = 3) {
+// 把准星代码画成图形；size=预览盒边长(px)
+// k=每个代码单位的像素数：以 valorantcrosshairdb 的渲染为基准校准（S1Mon 总跨度8单位→5px，即0.625px/单位）
+function crosshairParts(p, size, k = 0.625) {
   if (!p.crosshairCode) return "";
   const kv = parseCross(p.crosshairCode);
   const num = (key, d) => { const v = parseFloat(kv[key]); return Number.isFinite(v) ? v : d; };
@@ -342,10 +343,10 @@ function mapStageHtml(p) {
   if (typeof WALLS === "undefined" || !WALLS.length) return "";
   return `
       <div class="map-stage" id="map-stage" data-wall="0" style="${WALLS[0].style}">
-        <span class="ch-box" id="stage-ch" style="width:120px;height:120px;color:${chColorOf(p)}">${crosshairParts(p, 120, 2)}</span>
+        <span class="ch-box" id="stage-ch" style="width:120px;height:120px;color:${chColorOf(p)}">${crosshairParts(p, 120)}</span>
         <div class="map-lens" id="map-lens">
           <div class="map-lens-inner" id="map-lens-inner" style="${WALLS[0].style}">
-            <span class="ch-box lens-ch" style="width:120px;height:120px;color:${chColorOf(p)}">${crosshairParts(p, 120, 2)}</span>
+            <span class="ch-box lens-ch" style="width:120px;height:120px;color:${chColorOf(p)}">${crosshairParts(p, 120)}</span>
           </div>
         </div>
       </div>
@@ -370,7 +371,7 @@ function wallsHtml(p) {
             const [tag, cls] = visibilityTag(ratio);
             return `
           <div class="wall-tile${i === 0 ? " active" : ""}" data-wall="${i}" style="${w.style || ""}" title="${w.label} · 点击切换上方大图">
-            <span class="ch-box" style="width:56px;height:56px;color:${chColorOf(p)}">${crosshairParts(p, 56, 2)}</span>
+            <span class="ch-box" style="width:56px;height:56px;color:${chColorOf(p)}">${crosshairParts(p, 56)}</span>
             <i class="wall-label">${w.label}</i>
             <b class="wall-score ${cls}">${tag} ${ratio.toFixed(1)}</b>
           </div>`;
@@ -410,7 +411,7 @@ function openDetail(id) {
     <div class="d-section">
       <h3>准星</h3>
       <div class="d-cross">
-        ${p.crosshairCode ? chBox(p, 88) : ""}
+        ${p.crosshairCode ? chBox(p, 56) : ""}
         ${p.crosshairColor ? `<span><i class="cross-dot" style="background:${CROSS_COLORS[p.crosshairColor]}"></i>${p.crosshairColor}</span>` : `<span>颜色待核实</span>`}
         <span class="code">${p.crosshairCode ?? "待核实"}</span>
         ${p.crosshairCode ? `<button class="copy-btn" data-copy="${p.crosshairCode}" type="button">复制代码</button>` : ""}
@@ -475,7 +476,7 @@ function openPresetDetail(p) {
     <div class="d-section">
       <h3>准星</h3>
       <div class="d-cross">
-        ${chBox(p, 88)}
+        ${chBox(p, 56)}
         <span><i class="cross-dot" style="background:${CROSS_COLORS[p.crosshairColor] || "#ccc"}"></i>${p.crosshairColor}</span>
         <span class="code">${p.crosshairCode}</span>
         <button class="copy-btn" data-copy="${p.crosshairCode}" type="button">复制代码</button>
