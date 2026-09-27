@@ -172,7 +172,8 @@ DPI: 800   游戏内灵敏度: 0.35   eDPI: 280   360°转身距离: 约47cm
 | 2026-09-27 | M4 pnpm 安装方式 | [已执行·corepack] | **corepack 直呼方式**：`corepack enable` 因 Node 目录无写权限失败（EPERM），改用 `corepack pnpm <命令>` 直呼——免安装、免管理员权限，效果等同；pnpm 12.6.0 | 用户回复"继续"即按推荐方案执行 |
 | 2026-09-27 | M4 桌面窗口 | [已完成] | `corepack pnpm start` 成功：**赋能模拟器桌面窗口在本机运行**（Electron 44.4.5，加载现有网页原型，4 进程正常） | 依赖经 npmmirror 镜像安装（271 包）；注意：pnpm 默认拦截依赖构建脚本，已在 package.json 的 `pnpm.onlyBuiltDependencies` 放行 electron/esbuild/electron-winstaller，并执行 `node node_modules/electron/install.js` 完成二进制下载（246MB） |
 | 2026-09-27 | M4 Windows 安装包 | [已完成] | `pnpm dist` 打包成功：**release\赋能模拟器 Setup 0.4.0.exe**（194MB，NSIS 安装器：可选安装路径+桌面快捷方式）+ release\win-unpacked\ 免安装版 | 排障记录：①electron-builder 需在 PATH 中找到 pnpm——corepack shim 装到 `D:\tools\corepack-shims`（未污染系统目录），打包时临时挂 PATH ②NSIS 工具从 GitHub 下载超时——设 `ELECTRON_BUILDER_BINARIES_MIRROR` 用 npmmirror 镜像 ③pnpm 12 输出兼容性差，packageManager 锁定 pnpm@10.17.0 |
-| 2026-09-27 | 上传 GitHub（M5 前置） | [已完成] | 创建私有仓库 **CJuntong/funeng-moniqi** 并推送：main 分支全部提交 + M0~M4 五个里程碑标签 | 用户指定上传；GitHub CLI 授权因网络失败，改用本机已有凭据（Windows 凭据管理器里的 Git 凭据，复用未泄露）+ api.github.com 建仓；git 推送走 `http.curloptResolve` 固定可用 IP（140.82.112.3）绕开被墙的默认解析；.gitignore 已排除 node_modules/release（194MB 安装包不进仓库）；仓库默认**私有**，想开源随时可改 |
+| 2026-09-27 | 上传 GitHub（M5 前置） | [已完成] | 创建仓库 **CJuntong/funeng-moniqi** 并推送：main 分支全部提交 + M0~M4 五个里程碑标签 | GitHub CLI 授权因网络失败，改用本机已有凭据（Windows 凭据管理器里的 Git 凭据，复用未泄露）+ api.github.com 建仓；git 推送走 `http.curloptResolve` 固定可用 IP（140.82.112.3）绕开被墙的默认解析；.gitignore 已排除 node_modules/release（194MB 安装包不进仓库） |
+| 2026-09-27 | 发布在线网站 | [已完成] | 项目以 GitHub Pages 发布为公开网站：**https://cjuntong.github.io/funeng-moniqi/**（手机/任何电脑浏览器均可访问） | 用户要"一个 html 网站"；免费版 Pages 要求仓库公开，已将仓库转为 **public**（改回私有网站会停）；站点从 main 分支自动构建——以后 `git push` 后 1~2 分钟网站自动更新；中文文件名路径浏览器自动转码，实测资源全部 200 |
 
 ---
 
