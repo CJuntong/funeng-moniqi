@@ -54,7 +54,13 @@ body {
   backdrop-filter: blur(8px);
 }
 .nav-logo { display: flex; align-items: center; gap: 10px; }
-.nav-logo .logo-mark { width: 40px; height: 40px; font-size: 13px; }
+.nav-logo .logo-mark { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+.nav-logo .logo-mark img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(255, 226, 74, 0.4));
+}
 .nav-logo-text b { display: block; font-size: 16px; letter-spacing: 0.03em; }
 .nav-logo-text i { font-style: normal; font-size: 11px; color: var(--text-dim); }
 .nav-links { display: flex; gap: 4px; flex-wrap: wrap; }
