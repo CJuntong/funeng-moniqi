@@ -71,13 +71,65 @@ function monitorTierOf(p) {
   return p.monitorRes;
 }
 
-// 卡片第三行：准星颜色 + 屏幕分辨率档位
+// ---------- 准星可视化渲染（借鉴 valorantcrosshairdb：按代码参数画出准星真实样子） ----------
+const CH_GAME_COLORS = { 0: "#f5f7fa", 1: "#7cf53c", 2: "#b7f34a", 3: "#ffe24a", 4: "#00e5d0", 5: "#ff7ab8", 6: "#ff8a4d", 7: "#ff4655", 8: "#f5f7fa" };
+
+function parseCross(code) {
+  const o = {};
+  if (typeof code !== "string") return o;
+  const t = code.split(";");
+  for (let i = 0; i + 1 < t.length; i += 2) o[t[i]] = t[i + 1];
+  return o;
+}
+
+function chColorOf(p) {
+  const kv = parseCross(p.crosshairCode);
+  if (kv.c !== undefined && CH_GAME_COLORS[+kv.c]) return CH_GAME_COLORS[+kv.c];
+  return CROSS_COLORS[p.crosshairColor] || "#f5f7fa";
+}
+
+// 把准星代码画成图形；size=预览盒边长(px)，1个游戏单位≈3px
+function crosshairParts(p, size) {
+  if (!p.crosshairCode) return "";
+  const kv = parseCross(p.crosshairCode);
+  const num = (k, d) => { const v = parseFloat(kv[k]); return Number.isFinite(v) ? v : d; };
+  const half = size / 2;
+  const K = 3;
+  const parts = [];
+  const dot = kv.d === "1";
+  const z = Math.min(num("z", 1) * 2 + 2, half);
+  const iT = Math.max(2, num("0t", 1) * 2);
+  const iL = Math.min(num("0l", 0) * K, half - 2);
+  const iO = Math.min(num("0o", 1) * K + (dot ? z / 2 : 0), half - 2);
+  const oL = Math.min(num("1l", 0) * K, half - 2);
+  const oO = Math.min(num("1o", 0) * K + iO + iL, half - 2);
+  const oT = Math.max(2, num("1t", 1) * 2);
+  const line = (l, t, w, h) => parts.push(`<i class="ch-l" style="left:${l}px;top:${t}px;width:${w}px;height:${h}px"></i>`);
+  if (iL > 0) {
+    line(half - iT / 2, half - iO - iL, iT, iL);   // 内·上
+    line(half - iT / 2, half + iO, iT, iL);        // 内·下
+    line(half - iO - iL, half - iT / 2, iL, iT);   // 内·左
+    line(half + iO, half - iT / 2, iL, iT);        // 内·右
+  }
+  if (oL > 0) {
+    line(half - oT / 2, half - oO - oL, oT, oL);   // 外·上
+    line(half - oT / 2, half + oO, oT, oL);        // 外·下
+    line(half - oO - oL, half - oT / 2, oL, oT);   // 外·左
+    line(half + oO, half - oT / 2, oL, oT);        // 外·右
+  }
+  if (dot) line(half - z / 2, half - z / 2, z, z);
+  if (!parts.length) line(half - iT / 2, half - iT / 2, iT, iT);   // 无参数时退化为中心点
+  return parts.join("");
+}
+
+const chBox = (p, size) =>
+  `<span class="ch-box" style="width:${size}px;height:${size}px;color:${chColorOf(p)}">${crosshairParts(p, size)}</span>`;
+
+// 卡片第三行：准星预览 + 屏幕分辨率档位
 const crossLine = (p) => {
-  const c = p.crosshairColor
-    ? `<i class="cross-dot" style="background:${CROSS_COLORS[p.crosshairColor]}"></i>准星 ${p.crosshairColor}`
-    : "准星待核实";
+  const c = p.crosshairColor ?? "待核实";
   const m = monitorTierOf(p);
-  return `${c} · ${m ? m + "屏" : "屏幕待核实"}`;
+  return `${p.crosshairCode ? chBox(p, 20) : ""} 准星 ${c} · ${m ? m + "屏" : "屏幕待核实"}`;
 };
 
 // ---------- 收藏（保存在本机浏览器） ----------
@@ -185,10 +237,12 @@ function openDetail(id) {
     <div class="d-section">
       <h3>准星</h3>
       <div class="d-cross">
+        ${p.crosshairCode ? chBox(p, 88) : ""}
         ${p.crosshairColor ? `<span><i class="cross-dot" style="background:${CROSS_COLORS[p.crosshairColor]}"></i>${p.crosshairColor}</span>` : `<span>颜色待核实</span>`}
         <span class="code">${p.crosshairCode ?? "待核实"}</span>
         ${p.crosshairCode ? `<button class="copy-btn" data-copy="${p.crosshairCode}" type="button">复制代码</button>` : ""}
       </div>
+      ${p.crosshairCode ? `<p class="d-import">导入方法：游戏内 → 设置 → 准星 → 导入准星代码 → 粘贴后确认</p>` : ""}
     </div>
 
     <div class="d-section">
@@ -266,6 +320,17 @@ function renderFavButton() {
   if (state.favOnly && n === 0) { state.favOnly = false; btn.classList.remove("active"); }
 }
 
+// ---------- 页头统计条 ----------
+function renderStats() {
+  const total = PLAYERS.length;
+  const verified = PLAYERS.filter((p) => p.verified).length;
+  const teams = new Set(PLAYERS.map((p) => p.team)).size;
+  $("#stats-strip").innerHTML =
+    `<span>收录 <b>${total}</b> 名选手</span>` +
+    `<span>已核实 <b>${verified}</b> 人</span>` +
+    `<span>覆盖 <b>${teams}</b> 支战队</span>`;
+}
+
 // ---------- 事件绑定 ----------
 function bindEvents() {
   $("#search").addEventListener("input", (e) => { state.search = e.target.value; renderGrid(); });
@@ -323,6 +388,7 @@ function bindEvents() {
 
 // ---------- 启动 ----------
 initSelects();
+renderStats();
 renderFavButton();
 renderGrid();
 bindEvents();

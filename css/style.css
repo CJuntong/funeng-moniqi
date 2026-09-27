@@ -123,6 +123,36 @@ body {
 .count { margin-left: auto; font-size: 13px; color: var(--text-dim); }
 .count b { color: var(--accent); font-weight: 700; }
 
+/* ---------- 页头统计条 ---------- */
+.stats-strip {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 4px 28px 0;
+}
+.stats-strip span {
+  font-size: 12px;
+  color: var(--text-dim);
+  background: var(--panel);
+  border: 1px solid var(--panel-line);
+  border-radius: 3px;
+  padding: 4px 12px;
+}
+.stats-strip b { color: var(--accent); font-weight: 700; }
+
+/* ---------- 准星可视化预览 ---------- */
+.ch-box {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  flex: 0 0 auto;
+  background: #0b141d;
+  border: 1px solid var(--panel-line);
+  border-radius: 4px;
+}
+.ch-l { position: absolute; background: currentColor; }
+.ch-inline .ch-box { margin-right: 4px; }
+
 /* ---------- 选手卡片网格 ---------- */
 .grid {
   display: grid;
@@ -310,6 +340,8 @@ body {
   background: rgba(53, 208, 165, 0.12);
   border-left-color: var(--good);
 }
+
+.d-import { font-size: 12px; color: var(--text-dim); margin-top: 8px; }
 
 .d-src { list-style: none; display: grid; gap: 4px; }
 .d-src a { color: #7fb3d5; font-size: 12px; word-break: break-all; text-decoration: none; }
