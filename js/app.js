@@ -29,6 +29,7 @@ const TEAM_COLORS = {
   FPX: ["#ff6a3d", "#6e2413"], WOL: ["#9fb3c2", "#2b3d4f"], DRG: ["#ffb14d", "#6e4a10"],
   AG: ["#35d0a5", "#0d4a3a"], TEC: ["#b58cff", "#3a2466"], JDG: ["#ff5c5c", "#661a1a"],
   TYLOO: ["#ff8566", "#66291a"], XLG: ["#5ee0ff", "#0e4a5a"], NOVA: ["#ffd166", "#5a4712"],
+  自由人: ["#9aa7b1", "#39434c"],
   FNC: ["#ff5900", "#5a2400"], PRX: ["#ff4d88", "#5a1a33"], SEN: ["#ff4655", "#661a1a"],
   DRX: ["#4da6ff", "#123a66"], GEN: ["#e8c35a", "#4a3c12"],
 };
@@ -83,9 +84,11 @@ function parseCross(code) {
 }
 
 function chColorOf(p) {
+  // 优先采用来源网站标注的颜色（与该站预览一致）；无标注时按代码参数推断
+  if (p.crosshairColor && CROSS_COLORS[p.crosshairColor]) return CROSS_COLORS[p.crosshairColor];
   const kv = parseCross(p.crosshairCode);
   if (kv.c !== undefined && CH_GAME_COLORS[+kv.c]) return CH_GAME_COLORS[+kv.c];
-  return CROSS_COLORS[p.crosshairColor] || "#f5f7fa";
+  return "#f5f7fa";
 }
 
 // 把准星代码画成图形；size=预览盒边长(px)，1个游戏单位≈3px
@@ -219,7 +222,7 @@ function openDetail(id) {
       <h2>${p.name}</h2>
       <span class="card-role">${p.role ?? "待核实"}</span>
     </div>
-    <p class="d-sub">${p.team} · ${p.teamFull} · ${p.region}赛区${p.realName ? ` · ${p.realName}` : ""}</p>
+    <p class="d-sub">${p.team} · ${p.teamFull} · ${p.region}赛区${p.nick ? ` · ${p.nick}` : ""}${p.realName ? ` · ${p.realName}` : ""}</p>
     ${p.verified
       ? `<p class="d-note ok">✔ 以下设置整理自公开资料并已核对（来源见页尾）。</p>`
       : `<p class="d-note">以下设置尚未核实，可能为占位数据；将持续更新完善。</p>`}
