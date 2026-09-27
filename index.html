@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>无畏契约辅助 · 职业选手设置库</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="demo-banner">演示版 · 选手设置均为示例占位数据，正式版将逐条核实公开资料后录入</div>
+
+  <header class="topbar">
+    <div class="logo">
+      <span class="logo-mark">VAL</span>
+      <div>
+        <h1>无畏契约辅助</h1>
+        <p>职业选手设置库 · 网页原型 v0.1</p>
+      </div>
+    </div>
+    <input id="search" class="search" type="search" placeholder="搜索 选手ID / 战队 / 位置…">
+  </header>
+
+  <nav class="filters">
+    <select id="f-region"><option value="">全部赛区</option></select>
+    <select id="f-team"><option value="">全部战队</option></select>
+    <select id="f-role"><option value="">全部位置</option></select>
+    <select id="f-tier"><option value="">灵敏度档位</option></select>
+    <select id="f-color"><option value="">准星颜色</option></select>
+    <button id="fav-toggle" class="fav-toggle" type="button">☆ 只看收藏</button>
+    <button id="reset" class="reset" type="button">重置</button>
+    <span id="count" class="count"></span>
+  </nav>
+
+  <main>
+    <section id="grid" class="grid"></section>
+    <p id="empty" class="empty" hidden>没有符合条件的选手，试试放宽筛选条件。</p>
+  </main>
+
+  <footer class="footer">
+    无畏契约辅助 · 网页原型 v0.1 · 纯信息查询工具，不读写游戏文件 · 收藏数据保存在本机浏览器
+  </footer>
+
+  <!-- 选手详情弹窗 -->
+  <div id="modal" class="modal" hidden>
+    <div class="modal-mask" id="modal-mask"></div>
+    <div class="modal-card">
+      <button class="modal-close" id="modal-close" type="button">✕ 关闭</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="data/players.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
