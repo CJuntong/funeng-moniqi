@@ -227,6 +227,7 @@ function openDetail(id) {
   const p = PLAYERS.find((x) => x.id === id);
   if (!p) return;
   const fav = isFav(p.id);
+  const chL = hexLum(chColorOf(p));
   $("#modal-body").innerHTML = `
     ${avatarHtml(p, true)}
     <div class="d-head">
@@ -278,11 +279,16 @@ function openDetail(id) {
       <div class="d-section">
         <h3>9 种实战背景可见性预览</h3>
         <div class="wall-grid">
-          ${WALLS.map((w) => `
-          <div class="wall-tile ${w.cls || ""}" style="${w.style || ""}">
+          ${WALLS.map((w) => {
+            const ratio = contrastRatio(chL, w.lum);
+            const [tag, cls] = visibilityTag(ratio);
+            return `
+          <div class="wall-tile" style="${w.style || ""}">
             <span class="ch-box" style="width:56px;height:56px;color:${chColorOf(p)}">${crosshairParts(p, 56, 3)}</span>
             <i class="wall-label">${w.label}</i>
-          </div>`).join("")}
+            <b class="wall-score ${cls}">${tag} ${ratio.toFixed(1)}</b>
+          </div>`;
+          }).join("")}
         </div>
       </div>` : ""}` : ""}
     </div>
@@ -313,6 +319,7 @@ function openDetail(id) {
       <ul class="d-src">${p.sources.map((s) => `<li><a href="${s}" target="_blank" rel="noreferrer">${s}</a></li>`).join("")}</ul>
     </div>` : ""}
 
+    <button class="d-fav" data-copyfull type="button">📋 复制全套设置（分享给朋友）</button>
     <button class="d-fav ${fav ? "on" : ""}" data-dfav="${p.id}" type="button">
       ${fav ? "★ 已收藏（点击取消）" : "☆ 收藏这名选手"}
     </button>
@@ -338,6 +345,7 @@ async function copyText(text) {
     ta.value = text;
     ta.style.cssText = "position:fixed;opacity:0";
     document.body.appendChild(ta);
+    ta.focus();
     ta.select();
     let ok = false;
     try { ok = document.execCommand("copy"); } catch { /* 忽略 */ }
@@ -404,16 +412,114 @@ function initMapLens() {
 // ---------- 9 种实战背景（借鉴参考站：不同墙面/光照下检验准星可见性） ----------
 // 前 3 项为真实游戏截图（裂变峡谷实机截图的不同区域裁切），其余为程序绘制的典型墙面材质
 const WALLS = [
-  { label: "实战 · 峡谷天际", style: "background-image:url('assets/地图/裂变峡谷.jpg');background-size:cover;background-position:center 8%" },
-  { label: "实战 · 烟雾中路", style: "background-image:url('assets/地图/裂变峡谷.jpg');background-size:cover;background-position:center 45%" },
-  { label: "实战 · 对枪贴墙", style: "background-image:url('assets/地图/裂变峡谷.jpg');background-size:cover;background-position:center 80%" },
-  { label: "暗角", style: "background:linear-gradient(160deg,#1a2129,#0a0e12)" },
-  { label: "白墙", style: "background:linear-gradient(160deg,#d6dde2,#a8b2ba)" },
-  { label: "木箱", style: "background:repeating-linear-gradient(90deg,#8a6a48 0 14px,#755a3d 14px 17px)" },
-  { label: "金属", style: "background:linear-gradient(160deg,#4a5560,#363f48)" },
-  { label: "烟雾", style: "background:radial-gradient(circle at 42% 42%,#a8b4bd,#68737c)" },
-  { label: "霓虹", style: "background:linear-gradient(160deg,#3b2a5a,#1d1430)" },
+  { label: "实战 · 峡谷天际", lum: 0.5, style: "background-image:url('assets/地图/裂变峡谷.jpg');background-size:cover;background-position:center 8%" },
+  { label: "实战 · 烟雾中路", lum: 0.32, style: "background-image:url('assets/地图/裂变峡谷.jpg');background-size:cover;background-position:center 45%" },
+  { label: "实战 · 对枪贴墙", lum: 0.12, style: "background-image:url('assets/地图/裂变峡谷.jpg');background-size:cover;background-position:center 80%" },
+  { label: "暗角", lum: 0.015, style: "background:linear-gradient(160deg,#1a2129,#0a0e12)" },
+  { label: "白墙", lum: 0.66, style: "background:linear-gradient(160deg,#d6dde2,#a8b2ba)" },
+  { label: "木箱", lum: 0.17, style: "background:repeating-linear-gradient(90deg,#8a6a48 0 14px,#755a3d 14px 17px)" },
+  { label: "金属", lum: 0.085, style: "background:linear-gradient(160deg,#4a5560,#363f48)" },
+  { label: "烟雾", lum: 0.4, style: "background:radial-gradient(circle at 42% 42%,#a8b4bd,#68737c)" },
+  { label: "霓虹", lum: 0.045, style: "background:linear-gradient(160deg,#3b2a5a,#1d1430)" },
 ];
+
+// ---------- 可见性评分（原创：按对比度判断准星在背景上的清晰程度） ----------
+function hexLum(hex) {
+  const h = hex.replace("#", "");
+  const c = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16) / 255);
+  const f = (v) => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
+  return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]);
+}
+function contrastRatio(l1, l2) {
+  const a = Math.max(l1, l2), b = Math.min(l1, l2);
+  return (a + 0.05) / (b + 0.05);
+}
+function visibilityTag(ratio) {
+  return ratio >= 7 ? ["清晰", "good"] : ratio >= 3 ? ["可见", "mid"] : ["吃力", "bad"];
+}
+
+// ---------- 一键抄作业卡（原创：全套设置复制为分享文本） ----------
+function fullSettingsText(p) {
+  const lines = [`【赋能模拟器】${p.name}（${p.team}${p.realName ? " · " + p.realName : ""}）设置卡`];
+  if (p.dpi && p.sens) lines.push(`DPI ${p.dpi} × 灵敏度 ${p.sens} = eDPI ${edpiOf(p)}（${tierOf(p)}）· 360°约 ${cm360Of(p)}cm`);
+  if (p.crosshairCode) lines.push(`准星代码：${p.crosshairCode}${p.crosshairColor ? "（" + p.crosshairColor + "）" : ""}`);
+  if (p.res) lines.push(`画面：${p.res}${p.aspect ? " · " + p.aspect : ""}${p.monitorRes ? " · 屏幕 " + p.monitorRes : ""}`);
+  const gear = [
+    p.mouse && "鼠标 " + p.mouse, p.keyboard && "键盘 " + p.keyboard, p.headset && "耳机 " + p.headset,
+    p.mousepad && "鼠标垫 " + p.mousepad, p.monitor && "显示器 " + p.monitor,
+  ].filter(Boolean);
+  if (gear.length) lines.push("外设：" + gear.join(" / "));
+  if (p.source) lines.push("来源：" + p.source);
+  return lines.join("\n");
+}
+
+// ---------- 灵敏度实验室（原创：换算 + 手感匹配 + 分布图） ----------
+function openSensTool() {
+  $("#modal-body").dataset.pid = "";
+  $("#modal-body").innerHTML = `
+    <div class="d-head"><h2>灵敏度实验室</h2></div>
+    <p class="d-sub">输入你自己的设置：换算 360° 转身距离、匹配手感最接近的职业选手、查看你在全部选手中的位置</p>
+    <div class="sens-form">
+      <label>鼠标 DPI <input id="my-dpi" type="number" min="50" step="50" value="800"></label>
+      <label>游戏内灵敏度 <input id="my-sens" type="number" min="0.01" step="0.001" value="0.35"></label>
+      <button class="copy-btn" id="sens-go" type="button">分析手感</button>
+    </div>
+    <div id="sens-result"></div>`;
+  $("#modal").hidden = false;
+  document.body.style.overflow = "hidden";
+  const run = () => {
+    const dpi = parseFloat($("#my-dpi").value);
+    const sens = parseFloat($("#my-sens").value);
+    if (!(dpi > 0 && sens > 0)) { $("#sens-result").innerHTML = `<p class="d-note">请输入有效的 DPI 和灵敏度。</p>`; return; }
+    const myEdpi = Number((dpi * sens).toFixed(1));
+    const myCm = (2.54 * 360 / (0.07 * myEdpi)).toFixed(1);
+    const pool = PLAYERS.filter((x) => x.verified && x.dpi && x.sens);
+    const near = [...pool].sort((a, b) => Math.abs(edpiOf(a) - myEdpi) - Math.abs(edpiOf(b) - myEdpi)).slice(0, 3);
+    const min = Math.min(...pool.map(edpiOf)), max = Math.max(...pool.map(edpiOf));
+    const pos = (v) => Math.max(0, Math.min(100, ((v - min) / (max - min)) * 100));
+    $("#sens-result").innerHTML = `
+      <div class="d-section">
+        <h3>你的数据</h3>
+        <div class="d-grid">
+          <div class="d-item"><div class="k">你的 eDPI</div><div class="v">${myEdpi}</div></div>
+          <div class="d-item"><div class="k">360°转身距离</div><div class="v">约 ${myCm} cm</div></div>
+          <div class="d-item"><div class="k">灵敏度档位</div><div class="v">${tierOf({ dpi, sens })}</div></div>
+        </div>
+      </div>
+      <div class="d-section">
+        <h3>手感最接近的职业选手（点击查看详情）</h3>
+        ${near.map((x) => `
+          <div class="sens-match" data-open="${x.id}">
+            <span class="sm-name">${x.name}</span>
+            <span class="sm-team">${x.team} · ${x.teamFull}</span>
+            <span class="sm-edpi">eDPI ${edpiOf(x)}（与你相差 ${Math.abs(edpiOf(x) - myEdpi).toFixed(1)}）</span>
+            <span class="sm-go">查看 →</span>
+          </div>`).join("")}
+        <p class="d-import">同款手感换算：想在 DPI ${dpi} 下打出 <b>${near[0].name}</b> 的 eDPI（${edpiOf(near[0])}）？把灵敏度设为 <b>${(edpiOf(near[0]) / dpi).toFixed(3)}</b> 即可。</p>
+      </div>
+      <div class="d-section">
+        <h3>职业选手 eDPI 分布（红点 = 你）</h3>
+        <div class="dist-track">
+          ${pool.map((x) => `<i class="dist-dot" style="left:${pos(edpiOf(x))}%" title="${x.name} · eDPI ${edpiOf(x)}"></i>`).join("")}
+          <i class="dist-dot me" style="left:${pos(myEdpi)}%"></i>
+        </div>
+        <p class="d-import">全体范围：${min} ~ ${max} eDPI</p>
+      </div>`;
+    $("#sens-result").querySelectorAll("[data-open]").forEach((el) =>
+      el.addEventListener("click", () => openDetail(el.dataset.open)));
+  };
+  $("#sens-go").addEventListener("click", run);
+  run();
+}
+
+// ---------- 今日推荐（原创：按日期轮换，当天全站一致） ----------
+function renderDaily() {
+  const pool = PLAYERS.filter((p) => p.verified);
+  if (!pool.length) return;
+  const pick = pool[Math.floor(Date.now() / 86400000) % pool.length];
+  $("#daily-pick").innerHTML = `🔥 今日推荐 · <b>${pick.name}</b>（${pick.team}）—— 点看他的准星与全套设置`;
+  $("#daily-pick").onclick = () => openDetail(pick.id);
+}
 
 // ---------- 事件绑定 ----------
 function bindEvents() {
@@ -446,7 +552,11 @@ function bindEvents() {
     $("#fav-toggle").click();
     document.querySelector("#browse").scrollIntoView({ behavior: "smooth" });
   });
-  document.querySelector("[data-soon]")?.addEventListener("click", () => toast("灵敏度换算器开发中（M3），敬请期待"));
+  document.querySelector("[data-tool]")?.addEventListener("click", openSensTool);
+  document.querySelector("[data-random]")?.addEventListener("click", () => {
+    const pool = PLAYERS.filter((p) => p.verified);
+    openDetail(pool[Math.floor(Math.random() * pool.length)].id);
+  });
 
   // 卡片：点击开详情；点星标只切收藏
   $("#grid").addEventListener("click", (e) => {
@@ -470,6 +580,15 @@ function bindEvents() {
       const innerEl = $("#map-lens-inner");
       if (innerEl) innerEl.style.backgroundImage = `url('assets/地图/${MAPS[mapIdx]}')`;
       $("#map-name").textContent = MAPS[mapIdx].replace(/\.(png|jpg|jpeg|webp)$/i, "");
+      return;
+    }
+    const cfBtn = e.target.closest("[data-copyfull]");
+    if (cfBtn) {
+      const me = PLAYERS.find((x) => x.id === $("#modal-body").dataset.pid);
+      if (me) {
+        const ok = await copyText(fullSettingsText(me));
+        toast(ok ? "全套设置已复制，可直接粘贴分享" : "复制失败，请重试");
+      }
       return;
     }
     const copyBtn = e.target.closest("[data-copy]");
@@ -496,6 +615,7 @@ function bindEvents() {
 // ---------- 启动 ----------
 initSelects();
 renderStats();
+renderDaily();
 renderFavButton();
 renderGrid();
 bindEvents();
