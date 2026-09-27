@@ -19,6 +19,8 @@
       <a href="#top" class="active" data-view="players">首页</a>
       <a href="#browse" data-view="players">选手库</a>
       <a href="#browse" data-view="streamers">热门准星</a>
+      <a href="#browse" data-view="common">常用准星</a>
+      <a href="#browse" data-view="fun">娱乐准星</a>
     </div>
     <span class="nav-badge">网页原型 v0.2</span>
   </nav>
@@ -49,6 +51,7 @@
     <button id="fav-toggle" class="fav-toggle" type="button">☆ 只看收藏</button>
     <button id="reset" class="reset" type="button">重置</button>
     <span id="count" class="count"></span>
+    <span id="chips" class="chips" hidden></span>
   </nav>
 
   <main>
@@ -74,6 +77,7 @@
 
   <script src="data/players.js"></script>
   <script src="data/streamers.js"></script>
+  <script src="data/presets.js"></script>
   <script src="data/photos.js"></script>
   <script src="data/maps.js"></script>
   <script src="js/app.js"></script>

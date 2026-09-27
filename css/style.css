@@ -190,6 +190,38 @@ body {
 .count { margin-left: auto; font-size: 13px; color: var(--text-dim); }
 .count b { color: var(--accent); font-weight: 700; }
 
+/* 智慧快筛色条（常用/娱乐准星视图）：按准星颜色一键过滤 */
+.chips {
+  display: inline-flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+  width: 100%;
+  margin-top: 2px;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border: 1px solid var(--line, #2a3642);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.chip i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+}
+.chip:hover { border-color: var(--accent); color: var(--text); }
+.chip.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+
 .wall-score {
   position: absolute;
   right: 4px;
@@ -294,6 +326,18 @@ body {
 }
 .ch-l { position: absolute; background: currentColor; }
 .ch-inline .ch-box { margin-right: 4px; }
+
+/* 准星预设头像：预览图居中、去底色，融进队色渐变 */
+.card-avatar.preset { justify-content: center; }
+.card-avatar.preset .avatar-ch {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(11, 20, 29, 0.55);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+}
 
 /* ---------- 选手卡片网格 ---------- */
 .grid {

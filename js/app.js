@@ -16,11 +16,12 @@ const TIER_RULES = [
 const CROSS_COLORS = {
   "青": "#00e5d0", "绿": "#7cf53c", "白": "#f5f7fa",
   "红": "#ff4655", "粉": "#ff7ab8", "黄": "#ffe24a",
+  "紫": "#d6a3ff", "黑": "#8b939c",
 };
 
 const REGIONS = ["中国", "美洲", "EMEA", "太平洋"];
 
-const state = { search: "", view: "players", region: "", team: "", role: "", tier: "", color: "", favOnly: false };
+const state = { search: "", view: "players", region: "", team: "", role: "", tier: "", color: "", pcolor: "", favOnly: false };
 
 // ---------- 可视化头像 ----------
 // 统一风格：队伍主题色渐变 + 选手照片（如有）+ 战队标志背景水印（如有）+ 首字母兜底
@@ -32,6 +33,7 @@ const TEAM_COLORS = {
   自由人: ["#9aa7b1", "#39434c"],
   虎牙: ["#ffa51f", "#7a4a10"], 斗鱼: ["#ff5d23", "#6e250e"], 抖音: ["#25f4ee", "#0e2a2b"],
   B站: ["#fb7299", "#6d1f35"], 快手: ["#ff7e12", "#6e3a08"],
+  常用: ["#4da6ff", "#123a66"], 娱乐: ["#ff77aa", "#5a1a33"], 可爱: ["#ffb8db", "#5a2440"],
   FNC: ["#ff5900", "#5a2400"], PRX: ["#ff4d88", "#5a1a33"], SEN: ["#ff4655", "#661a1a"],
   DRX: ["#4da6ff", "#123a66"], GEN: ["#e8c35a", "#4a3c12"],
 };
@@ -39,6 +41,23 @@ const TEAM_COLORS = {
 // 照片文件名大小写不敏感匹配（vlr 别名大小写与显示名可能不同）
 const PHOTO_FILE = {};
 (typeof PHOTOS !== "undefined" ? PHOTOS : []).forEach((a) => { PHOTO_FILE[a.toLowerCase()] = a; });
+
+// 主播条目补齐通用字段（platform 即所属平台，映射到 team 供卡片/筛选复用）
+(typeof STREAMERS !== "undefined" ? STREAMERS : []).forEach((s) => {
+  s.team = s.platform;
+  s.teamFull = `${s.platform}主播`;
+  s.region = s.region ?? "中国";
+  s.verified = s.verified ?? true;
+});
+
+// 准星预设补齐通用字段，复用卡片头像 / 收藏 / 详情机制
+(typeof PRESETS !== "undefined" ? PRESETS : []).forEach((p) => {
+  p.preset = true;
+  p.team = p.cat;
+  p.teamFull = `${p.cat}准星`;
+  p.region = "通用";
+  p.verified = true;
+});
 
 function hashStr(s) {
   let h = 0;
@@ -48,8 +67,17 @@ function hashStr(s) {
 
 function avatarHtml(p, big = false) {
   const [c1, c2] = TEAM_COLORS[p.team] || ["#3d5871", "#16222e"];
-  const initials = (p.name.replace(/[^\p{L}\p{N}]/gu, "").slice(0, 2) || "??").toUpperCase();
   const angle = 105 + (hashStr(p.id || p.name) % 5) * 14;   // 同队不同选手，纹理角度略有差异
+  // 准星预设：头像区直接放大号准星预览（更直观，也避免中文首字母重复感）
+  if (p.preset) {
+    return `
+    <div class="card-avatar${big ? " big" : ""} preset" style="background:linear-gradient(${angle}deg, ${c1}, ${c2})">
+      <span class="avatar-pattern"></span>
+      <span class="ch-box avatar-ch" style="width:${big ? 96 : 72}px;height:${big ? 96 : 72}px;color:${chColorOf(p)}">${crosshairParts(p, big ? 96 : 72, 3)}</span>
+      <span class="avatar-team">${p.team}</span>
+    </div>`;
+  }
+  const initials = (p.name.replace(/[^\p{L}\p{N}]/gu, "").slice(0, 2) || "??").toUpperCase();
   const photoAlias = PHOTO_FILE[p.name.toLowerCase()];
   const photo = photoAlias
     ? `<img class="avatar-photo" src="assets/选手照片/${photoAlias}.png" alt="${p.name}" onerror="this.remove()">`
@@ -200,6 +228,7 @@ function initSelects() {
 
 // ---------- 卡片渲染 ----------
 function cardHtml(p) {
+  if (p.preset) return presetCardHtml(p);
   return `
     <article class="card" data-id="${p.id}">
       ${avatarHtml(p)}
@@ -221,13 +250,76 @@ function cardHtml(p) {
   `;
 }
 
+// 准星预设卡片（常用/娱乐）：无 DPI/外设等字段，突出准星样式本身
+function presetCardHtml(p) {
+  return `
+    <article class="card" data-id="${p.id}">
+      ${avatarHtml(p)}
+      <button class="card-star ${isFav(p.id) ? "on" : ""}" data-star="${p.id}"
+              title="收藏" aria-label="收藏">${isFav(p.id) ? "★" : "☆"}</button>
+      <div class="card-body">
+      <div class="card-head">
+        <span class="card-name">${p.name}</span>
+        <span class="card-role">${p.cat}样式</span>
+      </div>
+      <div class="card-team"><b>${p.team}</b> · 瓦境精选</div>
+      <div class="card-stats">
+        <span>${chBox(p, 20)} 准星 ${p.crosshairColor}</span>
+        <span>点击卡片查看地图效果 · 一键复制</span>
+      </div>
+      </div>
+    </article>
+  `;
+}
+
 function renderGrid() {
   const isSt = state.view === "streamers";
-  const list = isSt ? streamerList() : filteredPlayers();
-  $("#count").innerHTML = isSt ? `共 <b>${list.length}</b> 位主播` : `共 <b>${list.length}</b> 名选手`;
-  $("#empty").textContent = isSt ? "主播热门准星数据采集中，敬请期待…" : "没有符合条件的选手，试试放宽筛选条件。";
+  const isPre = state.view === "common" || state.view === "fun";
+  let list, countText, emptyText;
+  if (isSt) {
+    list = streamerList();
+    countText = `共 <b>${list.length}</b> 位主播`;
+    emptyText = "主播热门准星数据采集中，敬请期待…";
+  } else if (isPre) {
+    list = presetList();
+    countText = `共 <b>${list.length}</b> 个准星`;
+    emptyText = "没有符合条件的准星，试试换个颜色。";
+  } else {
+    list = filteredPlayers();
+    countText = `共 <b>${list.length}</b> 名选手`;
+    emptyText = "没有符合条件的选手，试试放宽筛选条件。";
+  }
+  $("#count").innerHTML = countText;
+  $("#empty").textContent = emptyText;
   $("#empty").hidden = list.length > 0;
   $("#grid").innerHTML = list.map(cardHtml).join("");
+  renderChips();
+}
+
+// ---------- 准星预设视图（常用 / 娱乐） ----------
+function presetList() {
+  const cats = state.view === "common" ? ["常用"] : ["娱乐", "可爱"];
+  const q = state.search.trim().toLowerCase();
+  return PRESETS.filter((s) => {
+    if (!cats.includes(s.cat)) return false;
+    if (state.pcolor && s.crosshairColor !== state.pcolor) return false;
+    if (q && !`${s.name} ${s.cat}`.toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+
+// 智慧快筛：预设视图下按准星颜色一键过滤（仅显示当前列表里存在的颜色）
+function renderChips() {
+  const box = $("#chips");
+  if (state.view !== "common" && state.view !== "fun") { box.hidden = true; return; }
+  const cats = state.view === "common" ? ["常用"] : ["娱乐", "可爱"];
+  const colors = [...new Set(PRESETS.filter((s) => cats.includes(s.cat)).map((s) => s.crosshairColor))];
+  box.innerHTML =
+    `<button class="chip ${state.pcolor ? "" : "on"}" data-chip="" type="button">全部</button>` +
+    colors.map((c) =>
+      `<button class="chip ${state.pcolor === c ? "on" : ""}" data-chip="${c}" type="button">
+        <i style="background:${CROSS_COLORS[c] || "#ccc"}"></i>${c}</button>`).join("");
+  box.hidden = false;
 }
 
 // ---------- 主播视图 ----------
@@ -238,15 +330,59 @@ function streamerList() {
 
 function setView(view) {
   state.view = view;
+  state.pcolor = "";
   document.querySelectorAll(".nav-links a").forEach((a) => a.classList.toggle("active", a.dataset.view === view));
-  ["f-region", "f-team", "f-role", "f-tier", "f-color"].forEach((id) => { $(`#${id}`).style.display = view === "streamers" ? "none" : ""; });
+  ["f-region", "f-team", "f-role", "f-tier", "f-color"].forEach((id) => { $(`#${id}`).style.display = view === "players" ? "" : "none"; });
   renderGrid();
+}
+
+// 地图预览台 + 墙面可见性网格（选手详情与准星预设详情共用）
+function mapStageHtml(p) {
+  if (typeof MAPS === "undefined" || !MAPS.length) return "";
+  return `
+      <div class="map-stage" id="map-stage" data-map="0" style="background-image:url('assets/地图/${MAPS[0]}')">
+        <div class="map-shade"></div>
+        <span class="ch-box" id="stage-ch" style="width:120px;height:120px;color:${chColorOf(p)}">${crosshairParts(p, 120, 3)}</span>
+        <div class="map-lens" id="map-lens">
+          <div class="map-lens-inner" id="map-lens-inner" style="background-image:url('assets/地图/${MAPS[0]}')">
+            <span class="ch-box lens-ch" style="width:120px;height:120px;color:${chColorOf(p)}">${crosshairParts(p, 120, 3)}</span>
+          </div>
+        </div>
+      </div>
+      <div class="map-controls">
+        <button class="mc-btn" data-act="prev" type="button">‹ 上张地图</button>
+        <span class="map-name" id="map-name">${MAPS[0].replace(/\.(png|jpg|jpeg|webp)$/i, "")}</span>
+        <button class="mc-btn" data-act="next" type="button">下张地图 ›</button>
+        <span class="map-hint">准星为游戏内正常大小 · 鼠标靠近它，放大镜会把细节放大</span>
+      </div>`;
+}
+
+function wallsHtml(p) {
+  if (typeof MAPS === "undefined" || !MAPS.length) return "";
+  const chL = hexLum(chColorOf(p));
+  return `
+      <div class="d-section">
+        <h3>9 种实战背景可见性预览</h3>
+        <div class="wall-grid">
+          ${WALLS.map((w) => {
+            const ratio = contrastRatio(chL, w.lum);
+            const [tag, cls] = visibilityTag(ratio);
+            return `
+          <div class="wall-tile" style="${w.style || ""}">
+            <span class="ch-box" style="width:56px;height:56px;color:${chColorOf(p)}">${crosshairParts(p, 56, 3)}</span>
+            <i class="wall-label">${w.label}</i>
+            <b class="wall-score ${cls}">${tag} ${ratio.toFixed(1)}</b>
+          </div>`;
+          }).join("")}
+        </div>
+      </div>`;
 }
 
 // ---------- 详情弹窗 ----------
 function openDetail(id) {
-  const p = PLAYERS.find((x) => x.id === id) || STREAMERS.find((x) => x.id === id);
+  const p = PLAYERS.find((x) => x.id === id) || STREAMERS.find((x) => x.id === id) || PRESETS.find((x) => x.id === id);
   if (!p) return;
+  if (p.preset) return openPresetDetail(p);
   const fav = isFav(p.id);
   const chL = hexLum(chColorOf(p));
   $("#modal-body").innerHTML = `
@@ -280,38 +416,9 @@ function openDetail(id) {
       </div>
       ${p.crosshairCode ? `<p class="d-import">导入方法：游戏内 → 设置 → 准星 → 导入准星代码 → 粘贴后确认</p>
 
-      ${typeof MAPS !== "undefined" && MAPS.length ? `
-      <div class="map-stage" id="map-stage" data-map="0" style="background-image:url('assets/地图/${MAPS[0]}')">
-        <div class="map-shade"></div>
-        <span class="ch-box" id="stage-ch" style="width:120px;height:120px;color:${chColorOf(p)}">${crosshairParts(p, 120, 3)}</span>
-        <div class="map-lens" id="map-lens">
-          <div class="map-lens-inner" id="map-lens-inner" style="background-image:url('assets/地图/${MAPS[0]}')">
-            <span class="ch-box lens-ch" style="width:120px;height:120px;color:${chColorOf(p)}">${crosshairParts(p, 120, 3)}</span>
-          </div>
-        </div>
-      </div>
-      <div class="map-controls">
-        <button class="mc-btn" data-act="prev" type="button">‹ 上张地图</button>
-        <span class="map-name" id="map-name">${MAPS[0].replace(/\.(png|jpg|jpeg|webp)$/i, "")}</span>
-        <button class="mc-btn" data-act="next" type="button">下张地图 ›</button>
-        <span class="map-hint">准星为游戏内正常大小 · 鼠标靠近它，放大镜会把细节放大</span>
-      </div>
+      ${mapStageHtml(p)}
 
-      <div class="d-section">
-        <h3>9 种实战背景可见性预览</h3>
-        <div class="wall-grid">
-          ${WALLS.map((w) => {
-            const ratio = contrastRatio(chL, w.lum);
-            const [tag, cls] = visibilityTag(ratio);
-            return `
-          <div class="wall-tile" style="${w.style || ""}">
-            <span class="ch-box" style="width:56px;height:56px;color:${chColorOf(p)}">${crosshairParts(p, 56, 3)}</span>
-            <i class="wall-label">${w.label}</i>
-            <b class="wall-score ${cls}">${tag} ${ratio.toFixed(1)}</b>
-          </div>`;
-          }).join("")}
-        </div>
-      </div>` : ""}` : ""}
+      ${wallsHtml(p)}` : ""}
     </div>
 
     <div class="d-section">
@@ -346,6 +453,44 @@ function openDetail(id) {
     </button>
   `;
   $("#modal-body").dataset.pid = p.id;
+  initMapLens(p);
+  $("#modal").hidden = false;
+  document.body.style.overflow = "hidden";
+}
+
+// 准星预设详情：突出样式预览 + 一键复制 + 地图/墙面效果（无灵敏度、外设等真人字段）
+function openPresetDetail(p) {
+  const fav = isFav(p.id);
+  $("#modal-body").dataset.pid = p.id;
+  $("#modal-body").innerHTML = `
+    ${avatarHtml(p, true)}
+    <div class="d-head">
+      <h2>${p.name}</h2>
+      <span class="card-role">${p.cat}样式</span>
+    </div>
+    <p class="d-sub">${p.team}准星 · 瓦境精选</p>
+    <p class="d-note ok">✔ 准星代码逐字取自 valopins.cn 准星代码大全，可直接导入。</p>
+
+    <div class="d-section">
+      <h3>准星</h3>
+      <div class="d-cross">
+        ${chBox(p, 88)}
+        <span><i class="cross-dot" style="background:${CROSS_COLORS[p.crosshairColor] || "#ccc"}"></i>${p.crosshairColor}</span>
+        <span class="code">${p.crosshairCode}</span>
+        <button class="copy-btn" data-copy="${p.crosshairCode}" type="button">复制代码</button>
+      </div>
+      <p class="d-import">导入方法：游戏内 → 设置 → 准星 → 导入准星代码 → 粘贴后确认</p>
+
+      ${mapStageHtml(p)}
+      ${wallsHtml(p)}
+
+      <p class="d-import">来源：<a href="${p.source}" target="_blank" rel="noreferrer">${p.source}</a></p>
+    </div>
+
+    <button class="d-fav ${fav ? "on" : ""}" data-dfav="${p.id}" type="button">
+      ${fav ? "★ 已收藏（点击取消）" : "☆ 收藏这个准星"}
+    </button>
+  `;
   initMapLens(p);
   $("#modal").hidden = false;
   document.body.style.overflow = "hidden";
@@ -559,7 +704,7 @@ function bindEvents() {
   });
 
   $("#reset").addEventListener("click", () => {
-    Object.assign(state, { search: "", region: "", team: "", role: "", tier: "", color: "", favOnly: false });
+    Object.assign(state, { search: "", region: "", team: "", role: "", tier: "", color: "", pcolor: "", favOnly: false });
     $("#search").value = "";
     for (const id of ["f-region", "f-team", "f-role", "f-tier", "f-color"]) $(`#${id}`).value = "";
     renderFavButton();
@@ -586,6 +731,14 @@ function bindEvents() {
   document.querySelector("[data-random]")?.addEventListener("click", () => {
     const pool = PLAYERS.filter((p) => p.verified);
     openDetail(pool[Math.floor(Math.random() * pool.length)].id);
+  });
+
+  // 智慧快筛：准星颜色一键过滤（预设视图）
+  $("#chips").addEventListener("click", (e) => {
+    const chip = e.target.closest("[data-chip]");
+    if (!chip) return;
+    state.pcolor = chip.dataset.chip;
+    renderGrid();
   });
 
   // 卡片：点击开详情；点星标只切收藏
@@ -632,8 +785,9 @@ function bindEvents() {
       const id = dfav.dataset.dfav;
       toggleFav(id);
       const fav = isFav(id);
+      const noun = id.startsWith("pre-") ? "这个准星" : "这名选手";
       dfav.classList.toggle("on", fav);
-      dfav.textContent = fav ? "★ 已收藏（点击取消）" : "☆ 收藏这名选手";
+      dfav.textContent = fav ? "★ 已收藏（点击取消）" : `☆ 收藏${noun}`;
     }
   });
 
