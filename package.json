@@ -4,6 +4,7 @@
   "version": "0.4.0",
   "description": "无畏契约职业选手设置库 · 纯信息查询工具，不读写游戏文件",
   "main": "electron/main.js",
+  "packageManager": "pnpm@10.17.0",
   "private": true,
   "scripts": {
     "start": "electron .",
@@ -12,6 +13,13 @@
   "devDependencies": {
     "electron": "latest",
     "electron-builder": "latest"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "electron",
+      "electron-winstaller",
+      "esbuild"
+    ]
   },
   "build": {
     "appId": "cn.funeng.moniqi",
