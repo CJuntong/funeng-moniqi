@@ -191,6 +191,26 @@ function toggleFav(id) {
   renderFavButton();
 }
 
+// ---------- 多人对比（最多同时 4 人，选择保存在本机浏览器） ----------
+const CMP_KEY = "valorant-assistant-compare";
+const loadCmp = () => { try { return JSON.parse(localStorage.getItem(CMP_KEY)) || []; } catch { return []; } };
+const saveCmp = (list) => localStorage.setItem(CMP_KEY, JSON.stringify(list));
+const isInCmp = (id) => loadCmp().includes(id);
+const cmpFind = (id) => PLAYERS.find((x) => x.id === id) || STREAMERS.find((x) => x.id === id);
+function toggleCmp(id) {
+  const list = loadCmp();
+  const i = list.indexOf(id);
+  if (i >= 0) { list.splice(i, 1); toast("已移出对比栏"); }
+  else {
+    if (list.length >= 4) { toast("最多同时对比 4 位，先移除一位吧"); return; }
+    list.push(id);
+    toast(list.length >= 2 ? "已加入对比栏，点右下角「开始对比」" : "已加入对比栏，再选 1~3 位即可对比");
+  }
+  saveCmp(list);
+  renderGrid();
+  renderCmpTray();
+}
+
 // ---------- 筛选 ----------
 function filteredPlayers() {
   const q = state.search.trim().toLowerCase();
@@ -235,6 +255,8 @@ function cardHtml(p) {
       ${avatarHtml(p)}
       <button class="card-star ${isFav(p.id) ? "on" : ""}" data-star="${p.id}"
               title="收藏" aria-label="收藏">${isFav(p.id) ? "★" : "☆"}</button>
+      <button class="card-cmp ${isInCmp(p.id) ? "on" : ""}" data-cmp="${p.id}"
+              title="加入/移出多人对比" aria-label="对比">⚖</button>
       <div class="card-body">
       <div class="card-head">
         <span class="card-name">${p.name}</span>
@@ -335,6 +357,99 @@ function setView(view) {
   document.querySelectorAll(".nav-links a").forEach((a) => a.classList.toggle("active", a.dataset.view === view));
   ["f-region", "f-team", "f-role", "f-tier", "f-color"].forEach((id) => { $(`#${id}`).style.display = view === "players" ? "" : "none"; });
   renderGrid();
+}
+
+// ---------- 多人对比：底部悬浮栏 + 对比弹窗 ----------
+function renderCmpTray() {
+  const tray = $("#cmp-tray");
+  const list = loadCmp().map(cmpFind).filter(Boolean);
+  if (!list.length) { tray.hidden = true; tray.innerHTML = ""; return; }
+  tray.hidden = false;
+  tray.innerHTML = `
+    <span class="ct-label">对比栏 ${list.length}/4：</span>
+    ${list.map((p) => `<span class="ct-chip" data-cmp-remove="${p.id}" title="移出对比栏">${p.name} ✕</span>`).join("")}
+    <button class="copy-btn ct-go" data-cmp-open type="button" ${list.length < 2 ? "disabled title=\"至少选择 2 位\"" : ""}>⚖ 开始对比</button>
+    <button class="ct-clear" data-cmp-clear type="button">清空</button>`;
+}
+
+function cmpFaceHtml(p) {
+  const alias = PHOTO_FILE[p.name.toLowerCase()];
+  if (alias) return `<img class="cmp-face" src="assets/选手照片/${alias}.png" alt="${p.name}" onerror="this.outerHTML='<span class=\\'cmp-face ghost\\'>${p.name.slice(0, 2)}</span>'">`;
+  return `<span class="cmp-face ghost">${p.name.slice(0, 2)}</span>`;
+}
+
+function openCmpModal() {
+  const list = loadCmp().map(cmpFind).filter(Boolean);
+  $("#modal-body").dataset.pid = "";
+  const pickRow = list.length < 4 ? `
+    <div class="cmp-pick">
+      <select id="cmp-select">
+        <option value="">＋ 添加选手 / 主播到对比栏…</option>
+        ${[...PLAYERS, ...STREAMERS].filter((p) => !loadCmp().includes(p.id))
+          .map((p) => `<option value="${p.id}">${p.name}（${p.team}${p.dpi && p.sens ? " · eDPI " + edpiOf(p) : ""}）</option>`).join("")}
+      </select>
+    </div>` : "";
+
+  if (!list.length) {
+    $("#modal-body").innerHTML = `
+      <div class="d-head"><h2>多人对比</h2></div>
+      <p class="d-sub">选择 2~4 位选手 / 主播，并排比较灵敏度、准星与外设</p>
+      <p class="d-note">两种加人方式：① 在「选手库」卡片右上角点 <b>⚖</b>；② 在下面的下拉框直接选：</p>
+      ${pickRow}
+      <div class="d-section">
+        <h3>对比内容</h3>
+        <p class="d-import">DPI / 灵敏度 / eDPI / 360° 转身距离逐项并排，eDPI 还会标在同一条刻度上；准星代码可逐个复制；最后有「同屏准星对比」——四颗准星按真实大小摆在同一张实战背景上。</p>
+      </div>`;
+  } else {
+    const withEdpi = list.filter((p) => p.dpi && p.sens);
+    const min = withEdpi.length ? Math.min(...withEdpi.map(edpiOf)) : 0;
+    const max = withEdpi.length ? Math.max(...withEdpi.map(edpiOf)) : 1;
+    const pos = (v) => max > min ? Math.max(0, Math.min(100, ((v - min) / (max - min)) * 100)) : 50;
+    const row = (label, fn) => `<tr><th>${label}</th>${list.map((p) => `<td>${fn(p)}</td>`).join("")}</tr>`;
+    $("#modal-body").innerHTML = `
+      <div class="d-head"><h2>多人对比（${list.length}/4）</h2></div>
+      ${pickRow}
+      <div class="cmp-scroll">
+        <table class="cmp-table">
+          ${row("照片", (p) => cmpFaceHtml(p))}
+          ${row("名字", (p) => `<b>${p.name}</b>`)}
+          ${row("队伍", (p) => `${p.team} · ${p.teamFull}`)}
+          ${row("鼠标 DPI", (p) => p.dpi ?? "待核实")}
+          ${row("游戏内灵敏度", (p) => p.sens ?? "待核实")}
+          ${row("eDPI", (p) => p.dpi && p.sens ? `<b>${edpiOf(p)}</b>（${tierOf(p)}）` : "待核实")}
+          ${withEdpi.length ? `<tr><th>eDPI 刻度</th>${list.map((p) => p.dpi && p.sens
+            ? `<td><span class="cmp-track"><i class="cmp-dot" style="left:${pos(edpiOf(p))}%"></i></span></td>` : "<td>—</td>").join("")}</tr>` : ""}
+          ${row("360°转身距离", (p) => p.dpi && p.sens ? `约 ${cm360Of(p)} cm` : "待核实")}
+          ${row("准星样式", (p) => p.crosshairCode ? chBox(p, 56) : "待核实")}
+          ${row("准星颜色", (p) => p.crosshairColor ?? "待核实")}
+          ${row("准星代码", (p) => p.crosshairCode
+            ? `<span class="cmp-code">${p.crosshairCode}</span><button class="copy-btn" data-copy="${p.crosshairCode}" type="button">复制</button>`
+            : "待核实")}
+          ${row("分辨率", (p) => p.res ?? "待核实")}
+          ${row("屏幕", (p) => monitorTierOf(p) ?? "待核实")}
+          ${row("外设", (p) => [p.mouse && "鼠 " + p.mouse, p.keyboard && "键 " + p.keyboard, p.headset && "耳 " + p.headset, p.mousepad && "垫 " + p.mousepad].filter(Boolean).join("<br>") || "待核实")}
+          ${row("操作", (p) => `<button class="ct-chip" data-cmp-remove="${p.id}" type="button">✕ 移出</button>`)}
+        </table>
+      </div>
+      <div class="d-section">
+        <h3>同屏准星对比（实战 · 峡谷天际，真实大小）</h3>
+        <div class="cmp-wall" style="${WALLS[0].style}">
+          ${list.filter((p) => p.crosshairCode).map((p) => `
+            <div class="cmp-cell">
+              <span class="ch-box" style="width:64px;height:64px;color:${chColorOf(p)}">${crosshairParts(p, 64)}</span>
+              <i>${p.name}</i>
+            </div>`).join("")}
+        </div>
+      </div>`;
+  }
+  $("#modal").hidden = false;
+  document.body.style.overflow = "hidden";
+  const sel = $("#cmp-select");
+  if (sel) sel.addEventListener("change", (e) => {
+    if (!e.target.value) return;
+    toggleCmp(e.target.value);
+    openCmpModal();
+  });
 }
 
 // 实战背景大图预览台 + 九宫格选择（选手详情与准星预设详情共用）
@@ -757,13 +872,24 @@ function bindEvents() {
     renderGrid();
   });
 
-  // 卡片：点击开详情；点星标只切收藏
+  // 卡片：点击开详情；点星标只切收藏；点 ⚖ 只切对比
   $("#grid").addEventListener("click", (e) => {
     const star = e.target.closest("[data-star]");
     if (star) { e.stopPropagation(); toggleFav(star.dataset.star); return; }
+    const cmpBtn = e.target.closest("[data-cmp]");
+    if (cmpBtn) { e.stopPropagation(); toggleCmp(cmpBtn.dataset.cmp); return; }
     const card = e.target.closest("[data-id]");
     if (card) openDetail(card.dataset.id);
   });
+
+  // 底部对比栏：移除 / 开始对比 / 清空
+  $("#cmp-tray").addEventListener("click", (e) => {
+    const rm = e.target.closest("[data-cmp-remove]");
+    if (rm) { toggleCmp(rm.dataset.cmpRemove); return; }
+    if (e.target.closest("[data-cmp-open]")) { openCmpModal(); return; }
+    if (e.target.closest("[data-cmp-clear]")) { saveCmp([]); renderCmpTray(); renderGrid(); toast("已清空对比栏"); }
+  });
+  $("#cmp-open").addEventListener("click", openCmpModal);
 
   // 弹窗内：地图预览台 / 复制 / 收藏 / 关闭
   $("#modal-body").addEventListener("click", async (e) => {
@@ -803,6 +929,14 @@ function bindEvents() {
       const noun = id.startsWith("pre-") ? "这个准星" : "这名选手";
       dfav.classList.toggle("on", fav);
       dfav.textContent = fav ? "★ 已收藏（点击取消）" : `☆ 收藏${noun}`;
+      return;
+    }
+    // 对比弹窗里的"移出"：移出后重建对比视图
+    const rmBtn = e.target.closest("[data-cmp-remove]");
+    if (rmBtn) {
+      toggleCmp(rmBtn.dataset.cmpRemove);
+      openCmpModal();
+      return;
     }
   });
 
@@ -816,5 +950,6 @@ initSelects();
 renderStats();
 renderDaily();
 renderFavButton();
+renderCmpTray();
 renderGrid();
 bindEvents();
