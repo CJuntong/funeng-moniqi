@@ -103,22 +103,21 @@ function chColorOf(p) {
   return "#f5f7fa";
 }
 
-// 把准星代码画成图形；size=预览盒边长(px)，1个游戏单位≈3px
-function crosshairParts(p, size) {
+// 把准星代码画成图形；size=预览盒边长(px)，k=每个游戏单位的像素数（地图预览台用大值放大）
+function crosshairParts(p, size, k = 3) {
   if (!p.crosshairCode) return "";
   const kv = parseCross(p.crosshairCode);
-  const num = (k, d) => { const v = parseFloat(kv[k]); return Number.isFinite(v) ? v : d; };
+  const num = (key, d) => { const v = parseFloat(kv[key]); return Number.isFinite(v) ? v : d; };
   const half = size / 2;
-  const K = 3;
   const parts = [];
   const dot = kv.d === "1";
-  const z = Math.min(num("z", 1) * 2 + 2, half);
-  const iT = Math.max(2, num("0t", 1) * 2);
-  const iL = Math.min(num("0l", 0) * K, half - 2);
-  const iO = Math.min(num("0o", 1) * K + (dot ? z / 2 : 0), half - 2);
-  const oL = Math.min(num("1l", 0) * K, half - 2);
-  const oO = Math.min(num("1o", 0) * K + iO + iL, half - 2);
-  const oT = Math.max(2, num("1t", 1) * 2);
+  const z = Math.min(num("z", 1) * k, half);
+  const iT = Math.max(1.5, num("0t", 1) * k * 0.8);
+  const iL = Math.min(num("0l", 0) * k, half - 2);
+  const iO = Math.min(num("0o", 1) * k + (dot ? z / 2 : 0), half - 2);
+  const oL = Math.min(num("1l", 0) * k, half - 2);
+  const oO = Math.min(num("1o", 0) * k + iO + iL, half - 2);
+  const oT = Math.max(1.5, num("1t", 1) * k * 0.8);
   const line = (l, t, w, h) => parts.push(`<i class="ch-l" style="left:${l}px;top:${t}px;width:${w}px;height:${h}px"></i>`);
   if (iL > 0) {
     line(half - iT / 2, half - iO - iL, iT, iL);   // 内·上
@@ -257,7 +256,22 @@ function openDetail(id) {
         <span class="code">${p.crosshairCode ?? "待核实"}</span>
         ${p.crosshairCode ? `<button class="copy-btn" data-copy="${p.crosshairCode}" type="button">复制代码</button>` : ""}
       </div>
-      ${p.crosshairCode ? `<p class="d-import">导入方法：游戏内 → 设置 → 准星 → 导入准星代码 → 粘贴后确认</p>` : ""}
+      ${p.crosshairCode ? `<p class="d-import">导入方法：游戏内 → 设置 → 准星 → 导入准星代码 → 粘贴后确认</p>
+
+      ${typeof MAPS !== "undefined" && MAPS.length ? `
+      <div class="map-stage" id="map-stage" data-map="0" data-k="9" style="background-image:url('assets/地图/${MAPS[0]}.png')">
+        <div class="map-shade"></div>
+        <span class="ch-box" id="stage-ch" style="width:150px;height:150px;color:${chColorOf(p)}">${crosshairParts(p, 150, 9)}</span>
+      </div>
+      <div class="map-controls">
+        <button class="mc-btn" data-act="prev" type="button">‹ 上张地图</button>
+        <span class="map-name" id="map-name">${MAPS[0]}</span>
+        <button class="mc-btn" data-act="next" type="button">下张地图 ›</button>
+        <span class="mc-label">放大倍数</span>
+        <button class="mc-btn" data-act="zoom" data-k="5" type="button">5×</button>
+        <button class="mc-btn" data-act="zoom" data-k="9" type="button">9×</button>
+        <button class="mc-btn" data-act="zoom" data-k="14" type="button">14×</button>
+      </div>` : ""}` : ""}
     </div>
 
     <div class="d-section">
@@ -290,6 +304,7 @@ function openDetail(id) {
       ${fav ? "★ 已收藏（点击取消）" : "☆ 收藏这名选手"}
     </button>
   `;
+  $("#modal-body").dataset.pid = p.id;
   $("#modal").hidden = false;
   document.body.style.overflow = "hidden";
 }
@@ -378,8 +393,26 @@ function bindEvents() {
     if (card) openDetail(card.dataset.id);
   });
 
-  // 弹窗内：复制 / 收藏 / 关闭
+  // 弹窗内：地图预览台 / 复制 / 收藏 / 关闭
   $("#modal-body").addEventListener("click", async (e) => {
+    const act = e.target.closest("[data-act]");
+    if (act) {
+      const stage = $("#map-stage");
+      const p = PLAYERS.find((x) => x.id === $("#modal-body").dataset.pid);
+      if (!stage || !p) return;
+      let mapIdx = +stage.dataset.map || 0;
+      let k = +stage.dataset.k || 9;
+      if (act.dataset.act === "prev") mapIdx = (mapIdx - 1 + MAPS.length) % MAPS.length;
+      if (act.dataset.act === "next") mapIdx = (mapIdx + 1) % MAPS.length;
+      if (act.dataset.act === "zoom") k = +act.dataset.k;
+      stage.dataset.map = mapIdx;
+      stage.dataset.k = k;
+      stage.style.backgroundImage = `url('assets/地图/${MAPS[mapIdx]}.png')`;
+      $("#map-name").textContent = MAPS[mapIdx];
+      const ch = $("#stage-ch");
+      if (ch) ch.outerHTML = `<span class="ch-box" id="stage-ch" style="width:150px;height:150px;color:${chColorOf(p)}">${crosshairParts(p, 150, k)}</span>`;
+      return;
+    }
     const copyBtn = e.target.closest("[data-copy]");
     if (copyBtn) {
       const ok = await copyText(copyBtn.dataset.copy);
