@@ -39,48 +39,115 @@ body {
   letter-spacing: 0.05em;
 }
 
-/* ---------- 顶栏 ---------- */
-.topbar {
+/* ---------- 顶部导航 ---------- */
+.topnav {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  flex-wrap: wrap;
-  padding: 20px 28px 12px;
+  padding: 12px 28px;
+  border-bottom: 1px solid var(--panel-line);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(15, 25, 35, 0.94);
+  backdrop-filter: blur(8px);
 }
+.nav-logo { display: flex; align-items: center; gap: 10px; }
+.nav-logo .logo-mark { width: 40px; height: 40px; font-size: 13px; }
+.nav-logo-text b { display: block; font-size: 16px; letter-spacing: 0.03em; }
+.nav-logo-text i { font-style: normal; font-size: 11px; color: var(--text-dim); }
+.nav-links { display: flex; gap: 4px; flex-wrap: wrap; }
+.nav-links a {
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--accent); background: var(--accent-soft); }
+.nav-badge { font-size: 11px; color: var(--text-dim); border: 1px solid var(--panel-line); padding: 5px 12px; border-radius: 999px; white-space: nowrap; }
 
-.logo { display: flex; align-items: center; gap: 14px; }
-
-.logo-mark {
-  display: grid;
-  place-items: center;
-  width: 46px;
-  height: 46px;
-  background: var(--accent);
-  color: #fff;
-  font-weight: 800;
+/* ---------- Hero 首屏（模仿 valorantcrosshairdb 首页） ---------- */
+.hero {
+  position: relative;
+  text-align: center;
+  padding: 58px 20px 46px;
+  overflow: hidden;
+  background: radial-gradient(1100px 420px at 50% -100px, rgba(255, 70, 85, 0.16), transparent 70%);
+}
+.hero-pill {
+  display: inline-block;
+  font-size: 12px;
+  color: #ffb3ba;
+  border: 1px solid rgba(255, 70, 85, 0.4);
+  background: rgba(255, 70, 85, 0.1);
+  padding: 6px 18px;
+  border-radius: 999px;
+  letter-spacing: 0.06em;
+}
+.hero-title {
+  font-size: 58px;
+  font-weight: 900;
+  margin: 20px 0 12px;
+  letter-spacing: 0.08em;
+  background: linear-gradient(180deg, #ffffff 30%, #ff8f9a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.hero-sub { color: var(--text-dim); font-size: 15px; line-height: 2; }
+.hero-cta { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin: 28px 0 30px; }
+.cta {
+  position: relative;
   font-size: 15px;
-  letter-spacing: 0.02em;
-  clip-path: polygon(0 0, 100% 0, 100% 72%, 72% 100%, 0 100%);
+  font-weight: 700;
+  padding: 13px 30px;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  transition: transform 0.15s, filter 0.15s;
 }
-
-.logo h1 { font-size: 22px; letter-spacing: 0.04em; }
-.logo p { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
-
-.search {
-  flex: 1;
-  min-width: 220px;
-  max-width: 420px;
+.cta:hover { transform: translateY(-2px); filter: brightness(1.1); }
+.cta::before, .cta::after { content: ""; position: absolute; width: 10px; height: 10px; }
+.cta::before { top: -5px; left: -5px; border-top: 2px solid rgba(255, 255, 255, 0.55); border-left: 2px solid rgba(255, 255, 255, 0.55); }
+.cta::after { bottom: -5px; right: -5px; border-bottom: 2px solid rgba(255, 255, 255, 0.55); border-right: 2px solid rgba(255, 255, 255, 0.55); }
+.cta-red { background: var(--accent); }
+.cta-blue { background: #4da6ff; }
+.cta-dark { background: #232f3b; border: 1px solid var(--panel-line); }
+.hero-stats { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 30px; }
+.stat-card {
+  background: rgba(28, 42, 56, 0.72);
+  border: 1px solid var(--panel-line);
+  border-radius: 6px;
+  padding: 14px 28px;
+  min-width: 132px;
+}
+.stat-card b { display: block; font-size: 27px; color: var(--accent); font-weight: 800; }
+.stat-card i { font-style: normal; font-size: 12px; color: var(--text-dim); }
+.hero-search {
+  display: block;
+  margin: 0 auto;
+  width: min(640px, 92%);
   background: var(--panel);
   border: 1px solid var(--panel-line);
   color: var(--text);
-  padding: 10px 14px;
-  font-size: 14px;
+  padding: 14px 20px;
+  font-size: 15px;
   outline: none;
-  border-radius: 4px;
+  border-radius: 8px;
+  transition: border-color 0.15s;
 }
-.search:focus { border-color: var(--accent); }
-.search::placeholder { color: var(--text-dim); }
+.hero-search:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255, 70, 85, 0.12); }
+.hero-search::placeholder { color: var(--text-dim); }
+.hero-scroll { display: inline-block; margin-top: 28px; color: var(--text-dim); font-size: 18px; animation: hero-bounce 1.6s infinite; }
+@keyframes hero-bounce { 50% { transform: translateY(6px); } }
+.dot { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 70, 85, 0.5); }
+.dot.d1 { top: 22%; left: 12%; }
+.dot.d2 { width: 4px; height: 4px; background: rgba(77, 166, 255, 0.55); top: 62%; left: 7%; }
+.dot.d3 { top: 26%; right: 11%; }
+.dot.d4 { width: 5px; height: 5px; background: rgba(77, 166, 255, 0.5); bottom: 16%; right: 6%; }
 
 /* ---------- 筛选栏 ---------- */
 .filters {
@@ -123,22 +190,8 @@ body {
 .count { margin-left: auto; font-size: 13px; color: var(--text-dim); }
 .count b { color: var(--accent); font-weight: 700; }
 
-/* ---------- 页头统计条 ---------- */
-.stats-strip {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  padding: 4px 28px 0;
-}
-.stats-strip span {
-  font-size: 12px;
-  color: var(--text-dim);
-  background: var(--panel);
-  border: 1px solid var(--panel-line);
-  border-radius: 3px;
-  padding: 4px 12px;
-}
-.stats-strip b { color: var(--accent); font-weight: 700; }
+/* ---------- Hero 统计卡片 ---------- */
+.stat-card b { color: var(--accent); font-weight: 800; }
 
 /* ---------- 准星可视化预览 ---------- */
 .ch-box {

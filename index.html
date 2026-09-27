@@ -10,19 +10,37 @@
 
   <div class="demo-banner">数据整理自公开资料 · ★ 标记的选手设置已核实，其余为待核实占位 · 持续更新 · 纯信息查询工具，不读写游戏文件</div>
 
-  <header class="topbar">
-    <div class="logo">
+  <nav class="topnav">
+    <div class="nav-logo">
       <span class="logo-mark">赋能</span>
-      <div>
-        <h1>赋能模拟器</h1>
-        <p>职业选手设置库 · 网页原型 v0.2</p>
-      </div>
+      <div class="nav-logo-text"><b>赋能模拟器</b><i>职业选手设置库</i></div>
     </div>
-    <input id="search" class="search" type="search" placeholder="搜索 选手ID / 战队 / 位置…">
+    <div class="nav-links">
+      <a href="#top" class="active">首页</a>
+      <a href="#browse">选手库</a>
+      <a href="#browse">战队</a>
+      <a href="#browse">准星</a>
+      <a href="#footer">关于</a>
+    </div>
+    <span class="nav-badge">网页原型 v0.2</span>
+  </nav>
+
+  <header class="hero" id="top">
+    <span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span><span class="dot d4"></span>
+    <span class="hero-pill">⚡ 无畏契约职业选手设置库</span>
+    <h2 class="hero-title">赋能模拟器</h2>
+    <p class="hero-sub">收录 2026 VCT 职业选手同款设置与准星代码<br>一键复制导入，秒级完成设置，打瓦更顺手</p>
+    <div class="hero-cta">
+      <button class="cta cta-red" data-scroll="#browse" type="button">🎯 浏览选手</button>
+      <button class="cta cta-blue" data-act-fav type="button">⭐ 我的收藏</button>
+      <button class="cta cta-dark" data-soon type="button">🛠 灵敏度换算</button>
+    </div>
+    <div class="hero-stats" id="hero-stats"></div>
+    <input id="search" class="hero-search" type="search" placeholder="搜索 选手ID / 战队 / 位置…">
+    <span class="hero-scroll">↓</span>
   </header>
 
-  <div class="stats-strip" id="stats-strip"></div>
-
+  <main id="browse">
   <nav class="filters">
     <select id="f-region"><option value="">全部赛区</option></select>
     <select id="f-team"><option value="">全部战队</option></select>
@@ -38,8 +56,9 @@
     <section id="grid" class="grid"></section>
     <p id="empty" class="empty" hidden>没有符合条件的选手，试试放宽筛选条件。</p>
   </main>
+  </main>
 
-  <footer class="footer">
+  <footer class="footer" id="footer">
     赋能模拟器 · 网页原型 v0.2 · 纯信息查询工具，不读写游戏文件 · 收藏数据保存在本机浏览器
   </footer>
 

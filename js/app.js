@@ -364,15 +364,18 @@ function renderFavButton() {
   if (state.favOnly && n === 0) { state.favOnly = false; btn.classList.remove("active"); }
 }
 
-// ---------- 页头统计条 ----------
+// ---------- Hero 统计卡片 ----------
 function renderStats() {
   const total = PLAYERS.length;
   const verified = PLAYERS.filter((p) => p.verified).length;
   const teams = new Set(PLAYERS.map((p) => p.team)).size;
-  $("#stats-strip").innerHTML =
-    `<span>收录 <b>${total}</b> 名选手</span>` +
-    `<span>已核实 <b>${verified}</b> 人</span>` +
-    `<span>覆盖 <b>${teams}</b> 支战队</span>`;
+  const photos = typeof PHOTOS !== "undefined" ? PHOTOS.length : 0;
+  const cards = [
+    [total, "收录选手"], [verified, "已核实设置"], [teams, "覆盖战队"], [photos, "真实照片"],
+  ];
+  $("#hero-stats").innerHTML = cards
+    .map(([n, label]) => `<div class="stat-card"><b>${n}</b><i>${label}</i></div>`)
+    .join("");
 }
 
 // ---------- 地图预览台：放大镜（场景中准星为正常大小，鼠标凑近即放大细节） ----------
@@ -435,6 +438,15 @@ function bindEvents() {
     renderFavButton();
     renderGrid();
   });
+
+  // Hero 区按钮：锚点滚动 / 收藏视图 / 即将上线提示
+  document.querySelectorAll("[data-scroll]").forEach((b) =>
+    b.addEventListener("click", () => document.querySelector(b.dataset.scroll)?.scrollIntoView({ behavior: "smooth" })));
+  document.querySelector("[data-act-fav]")?.addEventListener("click", () => {
+    $("#fav-toggle").click();
+    document.querySelector("#browse").scrollIntoView({ behavior: "smooth" });
+  });
+  document.querySelector("[data-soon]")?.addEventListener("click", () => toast("灵敏度换算器开发中（M3），敬请期待"));
 
   // 卡片：点击开详情；点星标只切收藏
   $("#grid").addEventListener("click", (e) => {
