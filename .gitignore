@@ -29,3 +29,9 @@ desktop.ini
 *.tmp
 *.temp
 cache/
+
+# ===== 助手临时工作文件 =====
+candidates/
+bing_*.html
+wiki_*.html
+_bingimgs.sh

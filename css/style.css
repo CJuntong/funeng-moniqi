@@ -390,6 +390,31 @@ body {
   border-color: rgba(255, 255, 255, 0.12);
 }
 .map-stage .ch-l { box-shadow: 0 0 4px rgba(0, 0, 0, 0.9); }
+
+/* 鼠标放大镜：圆形跟随，镜内为放大地图 + 准星 */
+.map-lens {
+  position: absolute;
+  left: -200px;
+  top: -200px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55), inset 0 0 24px rgba(0, 0, 0, 0.4);
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+.map-lens .lens-ch {
+  transition: transform 0.12s ease-out;
+  background: transparent;
+  border: none;
+}
 .map-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
 .mc-btn {
   background: var(--panel);
