@@ -709,9 +709,9 @@ function setStageWall(i) {
 // ---------- 9 种实战背景（借鉴参考站：不同场景/光照下检验准星可见性） ----------
 // 前 3 项为互不相同的真实第一人称实机截图，亮度取自图片中心区域（准星实际所在处）的实测值
 const WALLS = [
-  { label: "实战 · 峡谷天际", lum: 0.111, style: "background-image:url('assets/地图/实战-峡谷天际.jpg');background-size:cover;background-position:center" },
-  { label: "实战 · 烟雾中路", lum: 0.332, style: "background-image:url('assets/地图/实战-烟雾中路.jpg');background-size:cover;background-position:center" },
-  { label: "实战 · 对枪贴墙", lum: 0.179, style: "background-image:url('assets/地图/实战-对枪贴墙.jpg');background-size:cover;background-position:center" },
+  { label: "实战 · 峡谷天际", lum: 0.111, style: "background-image:url('assets/地图/实战-峡谷天际.jpg?v=2');background-size:cover;background-position:center" },
+  { label: "实战 · 烟雾中路", lum: 0.332, style: "background-image:url('assets/地图/实战-烟雾中路.jpg?v=2');background-size:cover;background-position:center" },
+  { label: "实战 · 对枪贴墙", lum: 0.179, style: "background-image:url('assets/地图/实战-对枪贴墙.jpg?v=2');background-size:cover;background-position:center" },
   { label: "暗角", lum: 0.015, style: "background:linear-gradient(160deg,#1a2129,#0a0e12)" },
   { label: "白墙", lum: 0.66, style: "background:linear-gradient(160deg,#d6dde2,#a8b2ba)" },
   { label: "木箱", lum: 0.17, style: "background:repeating-linear-gradient(90deg,#8a6a48 0 14px,#755a3d 14px 17px)" },
