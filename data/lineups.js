@@ -89,3 +89,224 @@ const LINEUPS = [
     desc: "包已下则守包听脚步，拆包声音是最好的“闪光弹”；包未下则不轻易现身，利用地图音效（门、绳子、传送门）制造假信息。残局每一秒都在给对手施加压力，先犯错的人输。",
     video: null },
 ];
+
+// ===== B 站教学视频出处（采集员逐条经 bilibili API 校验 BV 号有效，2026-10-03 采集）=====
+// 版权归原 UP 主所有，本工具仅以链接跳转原页面，不存储不转载视频内容。
+const LINEUP_VIDEOS = [
+ {
+  "map": "亚海悬城",
+  "title": "亚海悬城穿墙点位整整30个 无畏契约新手穿墙教学",
+  "author": "无畏战术大师兄",
+  "bvid": "BV1Qh7C6XEVx",
+  "url": "https://www.bilibili.com/video/BV1Qh7C6XEVx",
+  "play": 1154967,
+  "topic": "道具点位"
+ },
+ {
+  "map": "亚海悬城",
+  "title": "亚海悬城猎枭道具点位 无畏契约新手猎枭教学 猎枭秒杀箭点位",
+  "author": "无畏战术大师兄",
+  "bvid": "BV1bk5S6ZELE",
+  "url": "https://www.bilibili.com/video/BV1bk5S6ZELE",
+  "play": 260481,
+  "topic": "侦查道具点位"
+ },
+ {
+  "map": "亚海悬城",
+  "title": "亚海悬城奇乐进攻方道具思路教学",
+  "author": "Ys秀一丶",
+  "bvid": "BV1UCVn66EVT",
+  "url": "https://www.bilibili.com/video/BV1UCVn66EVT",
+  "play": 212521,
+  "topic": "进点技巧"
+ },
+ {
+  "map": "源工重镇",
+  "title": "源工重镇保安点位 无畏契约哨位零保安摄像头拌线单向烟教学",
+  "author": "无畏战术大师兄",
+  "bvid": "BV1KAuEziE9m",
+  "url": "https://www.bilibili.com/video/BV1KAuEziE9m",
+  "play": 539810,
+  "topic": "烟雾点位"
+ },
+ {
+  "map": "源工重镇",
+  "title": "源工重镇奶妈阴间冰墙点位教学",
+  "author": "九鹤-无畏契约手游",
+  "bvid": "BV1qqAhzuEuK",
+  "url": "https://www.bilibili.com/video/BV1qqAhzuEuK",
+  "play": 381501,
+  "topic": "道具点位"
+ },
+ {
+  "map": "源工重镇",
+  "title": "源工重镇奇乐A包点防守道具思路教学",
+  "author": "Ys秀一丶",
+  "bvid": "BV1CXGNzvEJ1",
+  "url": "https://www.bilibili.com/video/BV1CXGNzvEJ1",
+  "play": 238577,
+  "topic": "进点技巧"
+ },
+ {
+  "map": "隐世修所",
+  "title": "隐世修所钢锁教学 无畏契约钢索道具点位 钢索大招",
+  "author": "无畏战术大师兄",
+  "bvid": "BV1fXF3z1ELt",
+  "url": "https://www.bilibili.com/video/BV1fXF3z1ELt",
+  "play": 496768,
+  "topic": "道具点位"
+ },
+ {
+  "map": "隐世修所",
+  "title": "5分钟教你玩转隐世修所的进攻，进攻战术解析与爆弹执行",
+  "author": "大东彦",
+  "bvid": "BV1p94y1e7f4",
+  "url": "https://www.bilibili.com/video/BV1p94y1e7f4",
+  "play": 167581,
+  "topic": "烟雾点位"
+ },
+ {
+  "map": "隐世修所",
+  "title": "隐世修所KO道具点位 无畏契约新手KO教学 KO单向闪瞬爆闪点位",
+  "author": "无畏战术大师兄",
+  "bvid": "BV11KZZB2EMR",
+  "url": "https://www.bilibili.com/video/BV11KZZB2EMR",
+  "play": 136664,
+  "topic": "闪光点位"
+ },
+ {
+  "map": "莲华古城",
+  "title": "【无畏契约】猎枭|sova—无敌猎枭王 莲花古城/莲华古城 全点位寻敌探测箭 Valorant 瓦罗兰特",
+  "author": "无敌猎枭王",
+  "bvid": "BV1ou411A7LQ",
+  "url": "https://www.bilibili.com/video/BV1ou411A7LQ",
+  "play": 733490,
+  "topic": "侦查道具点位"
+ },
+ {
+  "map": "莲华古城",
+  "title": "莲华古城黑梦诡眼点位 无畏契约新手黑梦教学",
+  "author": "无畏战术大师兄",
+  "bvid": "BV1KaRhBNEzu",
+  "url": "https://www.bilibili.com/video/BV1KaRhBNEzu",
+  "play": 206961,
+  "topic": "道具点位"
+ },
+ {
+  "map": "莲华古城",
+  "title": "莲华古城正确C大包",
+  "author": "露白不白",
+  "bvid": "BV1Ajen6QErh",
+  "url": "https://www.bilibili.com/video/BV1Ajen6QErh",
+  "play": 103793,
+  "topic": "进点技巧"
+ },
+ {
+  "map": "霓虹町",
+  "title": "无畏契约全地图教学——霓虹町（上），防守思路与选位全解",
+  "author": "大东彦",
+  "bvid": "BV1Fz4y1q71y",
+  "url": "https://www.bilibili.com/video/BV1Fz4y1q71y",
+  "play": 624319,
+  "topic": "烟雾点位"
+ },
+ {
+  "map": "霓虹町",
+  "title": "【无畏契约】霓虹町保安单人扛点道具教学",
+  "author": "羊尾人无畏契约",
+  "bvid": "BV1ku4y1577y",
+  "url": "https://www.bilibili.com/video/BV1ku4y1577y",
+  "play": 590239,
+  "topic": "道具点位"
+ },
+ {
+  "map": "霓虹町",
+  "title": "霓虹町KO道具教学 无畏契约KO单向闪探测刀点位",
+  "author": "无畏战术大师兄",
+  "bvid": "BV1iSBUBoEs9",
+  "url": "https://www.bilibili.com/video/BV1iSBUBoEs9",
+  "play": 144716,
+  "topic": "侦查道具点位"
+ },
+ {
+  "map": "森寒冬港",
+  "title": "【无畏契约】森寒冬港蝰蛇道具教学！",
+  "author": "约德尔大人",
+  "bvid": "BV1zg4y1S7Xh",
+  "url": "https://www.bilibili.com/video/BV1zg4y1S7Xh",
+  "play": 952626,
+  "topic": "道具点位"
+ },
+ {
+  "map": "森寒冬港",
+  "title": "【无畏契约】奇乐森寒冬港思路道具教学！",
+  "author": "约德尔大人",
+  "bvid": "BV1LK42187Px",
+  "url": "https://www.bilibili.com/video/BV1LK42187Px",
+  "play": 325637,
+  "topic": "进点技巧"
+ },
+ {
+  "map": "森寒冬港",
+  "title": "【Liquid nAts】烟墙优化/进攻爽摸 森寒冬港Icebox蝰蛇Viper21杀打法解析 无畏契约职业选手第一视角解析",
+  "author": "圣诞ChristmasLdw",
+  "bvid": "BV1SboxYMEnC",
+  "url": "https://www.bilibili.com/video/BV1SboxYMEnC",
+  "play": 233661,
+  "topic": "烟雾点位"
+ },
+ {
+  "map": "日落之城",
+  "title": "【日落之城2.0】全新猎枭/sova探测箭！更快！更强！更丝滑！全地图覆盖！",
+  "author": "猎枭绝症柴柴",
+  "bvid": "BV1BD421j7N2",
+  "url": "https://www.bilibili.com/video/BV1BD421j7N2",
+  "play": 483619,
+  "topic": "侦查道具点位"
+ },
+ {
+  "map": "日落之城",
+  "title": "日落之城KO点位 无畏契约先锋位KO打法教学",
+  "author": "无畏战术大师兄",
+  "bvid": "BV1FQMMzFEHH",
+  "url": "https://www.bilibili.com/video/BV1FQMMzFEHH",
+  "play": 314914,
+  "topic": "进点技巧"
+ },
+ {
+  "map": "日落之城",
+  "title": "日落之城奶妈全点位阴间冰墙教学",
+  "author": "九鹤-无畏契约手游",
+  "bvid": "BV1LecqzUE1Q",
+  "url": "https://www.bilibili.com/video/BV1LecqzUE1Q",
+  "play": 284666,
+  "topic": "道具点位"
+ },
+ {
+  "map": "微风岛屿",
+  "title": "新微风岛屿蝰蛇教学 无畏契约蝰蛇道具点位 无畏契约新手教学",
+  "author": "无畏战术大师兄",
+  "bvid": "BV1N4rHBzExK",
+  "url": "https://www.bilibili.com/video/BV1N4rHBzExK",
+  "play": 151665,
+  "topic": "道具点位"
+ },
+ {
+  "map": "微风岛屿",
+  "title": "【瓦】Breeze微风岛屿elbow真的可以跳上圆柱平台",
+  "author": "Anki4o",
+  "bvid": "BV1YN411T7Rk",
+  "url": "https://www.bilibili.com/video/BV1YN411T7Rk",
+  "play": 76386,
+  "topic": "进点技巧"
+ },
+ {
+  "map": "微风岛屿",
+  "title": "微风岛屿海神道具点位 无畏契约新手烟位教学",
+  "author": "无畏战术大师兄",
+  "bvid": "BV1XmPzztEBg",
+  "url": "https://www.bilibili.com/video/BV1XmPzztEBg",
+  "play": 68647,
+  "topic": "烟雾点位"
+ }
+];

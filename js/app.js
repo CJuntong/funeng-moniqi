@@ -382,7 +382,8 @@ function weaponCardHtml(w) {
 }
 
 function lineupCardHtml(l) {
-  const vid = l.video ? `<span style="color:#7cf53c">🎬 有教学视频</span>` : `<span>视频整理中</span>`;
+  const vids = (typeof LINEUP_VIDEOS !== "undefined" ? LINEUP_VIDEOS : []).filter((v) => v.map === l.map).length;
+  const vid = vids ? `<span style="color:#7cf53c">🎬 教学视频 ×${vids}</span>` : `<span>视频整理中</span>`;
   return `
     <article class="card" data-id="${l.id}">
       <div class="card-avatar lineup-av"><span class="lu-map">${l.map}</span></div>
@@ -706,16 +707,20 @@ function openLineupDetail(l) {
       <h3>打法要点</h3>
       <p class="d-import" style="font-size:13px;line-height:1.9">${l.desc}</p>
     </div>
-    ${l.video ? `
-    <div class="d-section">
-      <h3>视频教学 · 出处</h3>
-      <div class="lu-video">
-        <div class="k">《${l.video.title}》</div>
-        <div class="v">UP 主：<b>${l.video.author}</b> · Bilibili</div>
-        <a class="copy-btn" style="text-decoration:none" href="${l.video.url}" target="_blank" rel="noreferrer">▶ 前往 B 站观看</a>
-      </div>
-      <p class="d-import">视频仅以链接跳转至 B 站原页面播放，版权归原 UP 主所有；若链接失效，可在 B 站搜索“${l.map} ${l.type}”。</p>
-    </div>` : `<p class="d-note">该点位的视频教学整理中（只收录真实有效的出处链接），可先参考上方文字打法。</p>`}
+    ${(() => {
+      const vids = (typeof LINEUP_VIDEOS !== "undefined" ? LINEUP_VIDEOS : []).filter((v) => v.map === l.map);
+      if (!vids.length) return `<p class="d-note">该地图的视频教学整理中（只收录真实有效的出处链接），可先参考上方文字打法。</p>`;
+      return `<div class="d-section">
+        <h3>教学视频 · 出处（B 站）</h3>
+        ${vids.map((v) => `
+        <div class="lu-video">
+          <div class="k">《${v.title}》</div>
+          <div class="v">UP 主：<b>${v.author}</b>${v.play ? " · 播放 " + (v.play / 10000).toFixed(1) + " 万" : ""}${v.topic ? " · " + v.topic : ""}</div>
+          <a class="copy-btn" style="text-decoration:none" href="${v.url}" target="_blank" rel="noreferrer">▶ 前往 B 站观看</a>
+        </div>`).join("")}
+        <p class="d-import">视频仅以链接跳转至 B 站原页面播放，版权归原 UP 主所有；若链接失效，可在 B 站搜索“${l.map} ${l.type} 教学”。</p>
+      </div>`;
+    })()}
   `;
   $("#modal").hidden = false;
   document.body.style.overflow = "hidden";
