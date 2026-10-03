@@ -970,3 +970,18 @@ body {
 .lu-video .k { font-size: 13px; font-weight: 700; color: var(--text); }
 .lu-video .v { font-size: 12px; color: var(--text-dim); }
 .lu-video .copy-btn { justify-self: start; margin-top: 2px; }
+
+/* ---------- 分组视图（武器按类型 / 点位按地图→英雄→职责层） ---------- */
+#grid.grouped { display: block; padding: 6px 0 30px; }
+.group-head {
+  margin: 14px 28px 2px;
+  padding: 6px 0 6px 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  border-left: 3px solid var(--accent);
+  background: linear-gradient(90deg, var(--accent-soft), transparent 70%);
+}
+.group-head i { font-style: normal; font-size: 11px; color: var(--text-dim); margin-left: 10px; letter-spacing: 0; }
+#grid.grouped .grid { padding: 8px 28px 16px; }

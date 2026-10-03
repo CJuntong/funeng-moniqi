@@ -300,6 +300,8 @@ function presetCardHtml(p) {
 function renderGrid() {
   const isSt = state.view === "streamers";
   const isPre = state.view === "common" || state.view === "fun";
+  const isW = state.view === "weapons";
+  const isL = state.view === "lineups";
   let list, countText, emptyText;
   if (isSt) {
     list = streamerList();
@@ -325,10 +327,48 @@ function renderGrid() {
   $("#count").innerHTML = countText;
   $("#empty").textContent = emptyText;
   $("#empty").hidden = list.length > 0;
-  $("#grid").innerHTML = list.map(cardHtml).join("");
+  $("#grid").classList.toggle("grouped", isW || isL);
+  if (isW) {
+    $("#grid").innerHTML = renderGrouped(list, (w) => w.type, WEAPON_TYPE_ORDER);
+  } else if (isL) {
+    // 点位：地图大组 → 组内按 英雄职责层 排序（英雄优先，通用垫后）
+    $("#grid").innerHTML = renderGrouped(list, (l) => l.map, null, (a, b) => {
+      const ra = a.agent ? ROLE_ORDER.indexOf(roleOf(a.agent)) : 99;
+      const rb = b.agent ? ROLE_ORDER.indexOf(roleOf(b.agent)) : 99;
+      return ra - rb || (a.agent || "").localeCompare(b.agent || "");
+    });
+  } else {
+    $("#grid").innerHTML = list.map(cardHtml).join("");
+  }
   renderChips();
 }
 
+const WEAPON_TYPE_ORDER = ["手枪", "冲锋枪", "步枪", "狙击枪", "机关枪", "霰弹枪"];
+const AGENT_ROLES = {
+  "幽影": "控场者", "星礈": "控场者", "海神": "控场者", "蝰蛇": "控场者", "蝮蛇": "控场者",
+  "猎枭": "先锋", "铁臂": "先锋", "KAY/O": "先锋", "溃影": "先锋", "黑梦": "先锋",
+  "菲尼克斯": "决斗者", "芮娜": "决斗者", "捷风": "决斗者", "雷兹": "决斗者", "霓虹": "决斗者", "尤朵拉": "决斗者",
+  "贤者": "守卫者", "奇乐": "守卫者", "钢锁": "守卫者", "零": "守卫者", "天后": "控场者",
+};
+const ROLE_ORDER = ["控场者", "先锋", "决斗者", "守卫者"];
+const roleOf = (agent) => (agent && AGENT_ROLES[agent]) || null;
+
+function renderGrouped(list, groupFn, order, itemSort) {
+  const groups = [];
+  for (const item of list) {
+    const k = groupFn(item);
+    let g = groups.find((x) => x.key === k);
+    if (!g) { g = { key: k, items: [] }; groups.push(g); }
+    g.items.push(item);
+  }
+  if (order) groups.sort((a, b) => order.indexOf(a.key) - order.indexOf(b.key));
+  if (itemSort) groups.forEach((g) => g.items.sort(itemSort));
+  return groups.map((g) => `
+    <h3 class="group-head">${g.key}<i>${g.items.length} 项</i></h3>
+    <div class="grid">${g.items.map(cardHtml).join("")}</div>`).join("");
+}
+
+// ---------- 武器节奏视图 ----------
 // ---------- 武器节奏视图 ----------
 function weaponList() {
   const q = state.search.trim().toLowerCase();
@@ -392,7 +432,7 @@ function lineupCardHtml(l) {
         <span class="card-name">${l.title.length > 13 ? l.title.slice(0, 13) + "…" : l.title}</span>
         <span class="card-role">${l.type}</span>
       </div>
-      <div class="card-team"><b>${l.map}</b>${l.agent ? " · " + l.agent : ""}</div>
+      <div class="card-team"><b>${l.map}</b>${l.agent ? ` · ${l.agent}（${roleOf(l.agent)}）` : " · 通用"}</div>
       <div class="card-stats">
         <span>${vid}</span>
         <span>${l.desc.slice(0, 24)}…</span>

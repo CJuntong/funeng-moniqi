@@ -23,7 +23,7 @@ const WEAPONS = [
     tips: "幻影开枪没有曳光弹、声音更闷——穿烟打人不容易暴露位置。烟内战和防守方绕后是它的主场。",
   },
   {
-    id: "w-guardian", name: "正义", en: "Guardian", type: "半自动步枪", price: 2250, mag: 12, rate: "5.25 发/秒", mode: "半自动",
+    id: "w-guardian", name: "正义", en: "Guardian", type: "步枪", price: 2250, mag: 12, rate: "5.25 发/秒", mode: "半自动",
     pattern: [[0,0],[0,-1],[0,0],[1,-1],[0,0],[-1,-1],[0,0],[1,0],[0,-1],[0,0],[1,-1],[0,0]],
     cadence: [
       { range: "任何距离", style: "当大号手枪用：有节奏地单点，间隔 0.2~0.3 秒，每一发都瞄头" },
