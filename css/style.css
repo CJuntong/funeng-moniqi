@@ -913,3 +913,60 @@ body {
   .logo h1 { font-size: 18px; }
   .count { width: 100%; margin-left: 0; }
 }
+
+/* ---------- 武器节奏视图 ---------- */
+.weapon-av {
+  background: linear-gradient(135deg, #2c3a47, #131c26);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.weapon-en {
+  font-family: var(--mono);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.75);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+}
+.card-avatar.big.weapon-av { height: 120px; }
+.card-avatar.big.weapon-av .weapon-en { font-size: 34px; }
+.spray-box {
+  background:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px),
+    #0b141d;
+  background-size: 26px 26px, 26px 26px, auto;
+  border: 1px solid var(--panel-line);
+  border-radius: 6px;
+  max-width: 360px;
+  padding: 6px;
+}
+
+/* ---------- 点位教学视图 ---------- */
+.lineup-av {
+  background: linear-gradient(135deg, #35506b, #101a26);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lu-map {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.06em;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+.card-avatar.big.lineup-av { height: 120px; }
+.card-avatar.big.lineup-av .lu-map { font-size: 26px; }
+.lu-video {
+  background: var(--panel);
+  border: 1px solid var(--panel-line);
+  border-radius: 6px;
+  padding: 10px 12px;
+  display: grid;
+  gap: 6px;
+}
+.lu-video .k { font-size: 13px; font-weight: 700; color: var(--text); }
+.lu-video .v { font-size: 12px; color: var(--text-dim); }
+.lu-video .copy-btn { justify-self: start; margin-top: 2px; }

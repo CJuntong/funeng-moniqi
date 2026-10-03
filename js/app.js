@@ -249,6 +249,8 @@ function initSelects() {
 
 // ---------- 卡片渲染 ----------
 function cardHtml(p) {
+  if (p.id.startsWith("w-")) return weaponCardHtml(p);
+  if (p.id.startsWith("lu-")) return lineupCardHtml(p);
   if (p.preset) return presetCardHtml(p);
   return `
     <article class="card" data-id="${p.id}">
@@ -307,6 +309,14 @@ function renderGrid() {
     list = presetList();
     countText = `共 <b>${list.length}</b> 个准星`;
     emptyText = "没有符合条件的准星，试试换个颜色。";
+  } else if (state.view === "weapons") {
+    list = weaponList();
+    countText = `共 <b>${list.length}</b> 把武器`;
+    emptyText = "没有找到武器，试试换个关键词。";
+  } else if (state.view === "lineups") {
+    list = lineupList();
+    countText = `共 <b>${list.length}</b> 条点位/技巧`;
+    emptyText = "该地图暂无收录，试试其他地图或清空筛选。";
   } else {
     list = filteredPlayers();
     countText = `共 <b>${list.length}</b> 名选手`;
@@ -317,6 +327,78 @@ function renderGrid() {
   $("#empty").hidden = list.length > 0;
   $("#grid").innerHTML = list.map(cardHtml).join("");
   renderChips();
+}
+
+// ---------- 武器节奏视图 ----------
+function weaponList() {
+  const q = state.search.trim().toLowerCase();
+  return WEAPONS.filter((w) => !q || (w.name + " " + w.en + " " + w.type).toLowerCase().includes(q));
+}
+
+function lineupList() {
+  const q = state.search.trim().toLowerCase();
+  return LINEUPS.filter((l) => {
+    if (state.pcolor && l.map !== state.pcolor) return false;
+    if (q && !(l.title + " " + l.map + " " + (l.agent || "") + " " + l.type + " " + l.desc).toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+
+// 弹道示意图（自制原创绘制）：弹着点连线 + 起始准星参考
+function spraySvg(w, size) {
+  const pts = w.pattern;
+  const pad = 12;
+  const X = (x) => (pad + (x + 16) * ((size - pad * 2) / 32)).toFixed(1);
+  const Y = (y) => (pad + (y + 26) * ((size - pad * 2) / 32)).toFixed(1);
+  const path = pts.map((p, i) => (i ? "L" : "M") + X(p[0]) + "," + Y(p[1])).join(" ");
+  const dots = pts.map((p, i) =>
+    `<circle cx="${X(p[0])}" cy="${Y(p[1])}" r="${i === 0 ? 3 : 2}" fill="${i < 4 ? "#f5f7fa" : i < 12 ? "#7cf53c" : "#ff7ab8"}" opacity="0.95"/>`).join("");
+  const ch = `<line x1="${X(0) - 6}" y1="${Y(0)}" x2="${X(0) + 6}" y2="${Y(0)}" stroke="#00e5d0" stroke-width="1"/>
+    <line x1="${X(0)}" y1="${Y(0) - 6}" x2="${X(0)}" y2="${Y(0) + 6}" stroke="#00e5d0" stroke-width="1"/>`;
+  return `<svg viewBox="0 0 ${size} ${size}" width="100%" height="100%">
+    <path d="${path}" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="1"/>
+    ${dots}${ch}
+    <text x="${X(0)}" y="${Number(Y(0)) + 16}" fill="#8b939c" font-size="10" text-anchor="middle">▲ 起始弹着点（前 4 发白色）</text>
+  </svg>`;
+}
+
+function weaponCardHtml(w) {
+  return `
+    <article class="card" data-id="${w.id}">
+      <div class="card-avatar weapon-av"><span class="weapon-en">${w.en}</span></div>
+      <div class="card-body">
+      <div class="card-head">
+        <span class="card-name">${w.name}</span>
+        <span class="card-role">${w.type}</span>
+      </div>
+      <div class="card-team"><b>${w.price === 0 ? "免费" : w.price + " 信用点"}</b> · ${w.en}</div>
+      <div class="card-stats">
+        <span>弹匣 <b>${w.mag}</b> 发 · ${w.mode}</span>
+        <span>${w.cadence[0].range}</span>
+      </div>
+      </div>
+    </article>
+  `;
+}
+
+function lineupCardHtml(l) {
+  const vid = l.video ? `<span style="color:#7cf53c">🎬 有教学视频</span>` : `<span>视频整理中</span>`;
+  return `
+    <article class="card" data-id="${l.id}">
+      <div class="card-avatar lineup-av"><span class="lu-map">${l.map}</span></div>
+      <div class="card-body">
+      <div class="card-head">
+        <span class="card-name">${l.title.length > 13 ? l.title.slice(0, 13) + "…" : l.title}</span>
+        <span class="card-role">${l.type}</span>
+      </div>
+      <div class="card-team"><b>${l.map}</b>${l.agent ? " · " + l.agent : ""}</div>
+      <div class="card-stats">
+        <span>${vid}</span>
+        <span>${l.desc.slice(0, 24)}…</span>
+      </div>
+      </div>
+    </article>
+  `;
 }
 
 // ---------- 准星预设视图（常用 / 娱乐） ----------
@@ -331,9 +413,17 @@ function presetList() {
   });
 }
 
-// 智慧快筛：预设视图下按准星颜色一键过滤（仅显示当前列表里存在的颜色）
+// 智慧快筛：预设视图按颜色、点位视图按地图一键过滤
 function renderChips() {
   const box = $("#chips");
+  if (state.view === "lineups") {
+    const maps = [...new Set(LINEUPS.map((l) => l.map))];
+    box.innerHTML =
+      `<button class="chip ${state.pcolor ? "" : "on"}" data-chip="" type="button">全部地图</button>` +
+      maps.map((m) => `<button class="chip ${state.pcolor === m ? "on" : ""}" data-chip="${m}" type="button">${m}</button>`).join("");
+    box.hidden = false;
+    return;
+  }
   if (state.view !== "common" && state.view !== "fun") { box.hidden = true; return; }
   const cats = state.view === "common" ? ["常用"] : ["娱乐", "可爱"];
   const colors = [...new Set(PRESETS.filter((s) => cats.includes(s.cat)).map((s) => s.crosshairColor))];
@@ -498,7 +588,13 @@ function wallsHtml(p) {
 // ---------- 详情弹窗 ----------
 function openDetail(id) {
   const p = PLAYERS.find((x) => x.id === id) || STREAMERS.find((x) => x.id === id) || PRESETS.find((x) => x.id === id);
-  if (!p) return;
+  if (!p) {
+    const w = WEAPONS.find((x) => x.id === id);
+    if (w) return openWeaponDetail(w);
+    const l = LINEUPS.find((x) => x.id === id);
+    if (l) return openLineupDetail(l);
+    return;
+  }
   if (p.preset) return openPresetDetail(p);
   const fav = isFav(p.id);
   const chL = hexLum(chColorOf(p));
@@ -571,6 +667,56 @@ function openDetail(id) {
   `;
   $("#modal-body").dataset.pid = p.id;
   initMapLens(p);
+  $("#modal").hidden = false;
+  document.body.style.overflow = "hidden";
+}
+
+// 武器详情：开枪节奏 + 弹道示意
+function openWeaponDetail(w) {
+  $("#modal-body").dataset.pid = "";
+  $("#modal-body").innerHTML = `
+    <div class="card-avatar big weapon-av"><span class="weapon-en">${w.en}</span></div>
+    <div class="d-head"><h2>${w.name}</h2><span class="card-role">${w.type}</span></div>
+    <p class="d-sub">${w.en} · ${w.price === 0 ? "免费" : w.price + " 信用点"} · 弹匣 ${w.mag} 发 · ${w.rate} · ${w.mode}</p>
+    <div class="d-section">
+      <h3>开枪节奏</h3>
+      <div class="d-grid">
+        ${w.cadence.map((c) => `<div class="d-item"><div class="k">${c.range}</div><div class="v">${c.style}</div></div>`).join("")}
+      </div>
+    </div>
+    <div class="d-section">
+      <h3>弹道示意（连发弹着走向）</h3>
+      <div class="spray-box">${spraySvg(w, 320)}</div>
+      <p class="d-import">弹着点分布为自制示意图，用于理解压枪方向（白=前几发，绿=中段，粉=后段）；实际弹道以游戏内为准。</p>
+    </div>
+    <div class="d-section"><h3>使用心得</h3><p class="d-import" style="font-size:13px;line-height:1.8">${w.tips}</p></div>
+  `;
+  $("#modal").hidden = false;
+  document.body.style.overflow = "hidden";
+}
+
+// 点位详情：打法要点 + 视频出处链接
+function openLineupDetail(l) {
+  $("#modal-body").dataset.pid = "";
+  $("#modal-body").innerHTML = `
+    <div class="card-avatar big lineup-av"><span class="lu-map">${l.map}</span></div>
+    <div class="d-head"><h2>${l.title}</h2><span class="card-role">${l.type}</span></div>
+    <p class="d-sub">${l.map}${l.agent ? " · " + l.agent : ""} · 道具点位与进点教学</p>
+    <div class="d-section">
+      <h3>打法要点</h3>
+      <p class="d-import" style="font-size:13px;line-height:1.9">${l.desc}</p>
+    </div>
+    ${l.video ? `
+    <div class="d-section">
+      <h3>视频教学 · 出处</h3>
+      <div class="lu-video">
+        <div class="k">《${l.video.title}》</div>
+        <div class="v">UP 主：<b>${l.video.author}</b> · Bilibili</div>
+        <a class="copy-btn" style="text-decoration:none" href="${l.video.url}" target="_blank" rel="noreferrer">▶ 前往 B 站观看</a>
+      </div>
+      <p class="d-import">视频仅以链接跳转至 B 站原页面播放，版权归原 UP 主所有；若链接失效，可在 B 站搜索“${l.map} ${l.type}”。</p>
+    </div>` : `<p class="d-note">该点位的视频教学整理中（只收录真实有效的出处链接），可先参考上方文字打法。</p>`}
+  `;
   $("#modal").hidden = false;
   document.body.style.overflow = "hidden";
 }
