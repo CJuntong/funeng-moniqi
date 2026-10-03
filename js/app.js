@@ -21,7 +21,7 @@ const CROSS_COLORS = {
 
 const REGIONS = ["中国", "美洲", "EMEA", "太平洋"];
 
-const state = { search: "", view: "players", region: "", team: "", role: "", tier: "", color: "", pcolor: "", favOnly: false };
+const state = { search: "", view: "players", region: "", team: "", role: "", tier: "", color: "", pcolor: "", pagent: "", favOnly: false };
 
 // ---------- 可视化头像 ----------
 // 统一风格：队伍主题色渐变 + 选手照片（如有）+ 战队标志背景水印（如有）+ 首字母兜底
@@ -398,6 +398,7 @@ function lineupList() {
   const q = state.search.trim().toLowerCase();
   return LINEUPS.filter((l) => {
     if (state.pcolor && l.map !== state.pcolor) return false;
+    if (state.pagent && l.agent !== state.pagent) return false;
     if (q && !(l.title + " " + l.map + " " + (l.agent || "") + " " + l.type + " " + l.desc).toLowerCase().includes(q)) return false;
     return true;
   });
@@ -476,12 +477,28 @@ function presetList() {
 // 智慧快筛：预设视图按颜色、点位视图按地图一键过滤
 function renderChips() {
   const box = $("#chips");
+  const box2 = $("#chips2");
+  if (state.view !== "lineups") { box2.hidden = true; box2.innerHTML = ""; }
   if (state.view === "lineups") {
     const maps = [...new Set(LINEUPS.map((l) => l.map))];
     box.innerHTML =
       `<button class="chip ${state.pcolor ? "" : "on"}" data-chip="" type="button">全部地图</button>` +
       maps.map((m) => `<button class="chip ${state.pcolor === m ? "on" : ""}" data-chip="${m}" type="button">${m}</button>`).join("");
     box.hidden = false;
+    // 选定地图后：出现该地图的英雄筛选项（英雄按职责层排序）
+    const box2 = $("#chips2");
+    const agents = state.pcolor
+      ? [...new Set(LINEUPS.filter((l) => l.map === state.pcolor && l.agent).map((l) => l.agent))]
+          .sort((a, b) => ROLE_ORDER.indexOf(roleOf(a)) - ROLE_ORDER.indexOf(roleOf(b)))
+      : [];
+    if (agents.length) {
+      box2.innerHTML =
+        `<button class="chip ${state.pagent ? "" : "on"}" data-chip2="" type="button">全部英雄</button>` +
+        agents.map((a) => `<button class="chip ${state.pagent === a ? "on" : ""}" data-chip2="${a}" type="button">${a}<i>${roleOf(a)}</i></button>`).join("");
+      box2.hidden = false;
+    } else {
+      box2.hidden = true; box2.innerHTML = "";
+    }
     return;
   }
   if (state.view !== "common" && state.view !== "fun") { box.hidden = true; return; }
@@ -504,6 +521,7 @@ function streamerList() {
 function setView(view) {
   state.view = view;
   state.pcolor = "";
+  state.pagent = "";
   document.querySelectorAll(".nav-links a").forEach((a) => a.classList.toggle("active", a.dataset.view === view));
   ["f-region", "f-team", "f-role", "f-tier", "f-color"].forEach((id) => { $(`#${id}`).style.display = view === "players" ? "" : "none"; });
   renderGrid();
@@ -1045,7 +1063,7 @@ function bindEvents() {
   });
 
   $("#reset").addEventListener("click", () => {
-    Object.assign(state, { search: "", region: "", team: "", role: "", tier: "", color: "", pcolor: "", favOnly: false });
+    Object.assign(state, { search: "", region: "", team: "", role: "", tier: "", color: "", pcolor: "", pagent: "", favOnly: false });
     $("#search").value = "";
     for (const id of ["f-region", "f-team", "f-role", "f-tier", "f-color"]) $(`#${id}`).value = "";
     renderFavButton();
@@ -1079,6 +1097,13 @@ function bindEvents() {
     const chip = e.target.closest("[data-chip]");
     if (!chip) return;
     state.pcolor = chip.dataset.chip;
+    state.pagent = "";
+    renderGrid();
+  });
+  $("#chips2").addEventListener("click", (e) => {
+    const chip = e.target.closest("[data-chip2]");
+    if (!chip) return;
+    state.pagent = chip.dataset.chip2;
     renderGrid();
   });
 

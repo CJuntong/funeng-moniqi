@@ -999,3 +999,14 @@ body {
 .sub-head.atk { color: #ff8a8a; background: linear-gradient(90deg, rgba(255,70,85,0.18), transparent 70%); border-left: 3px solid #ff4655; }
 .sub-head.def { color: #7ee8d0; background: linear-gradient(90deg, rgba(0,229,208,0.14), transparent 70%); border-left: 3px solid #00e5d0; }
 #grid.grouped .sub-head + .grid { padding: 6px 28px 10px; }
+
+/* 第二行筛选项（英雄）：比地图行更紧凑 */
+.chips2 { margin-top: -6px; }
+.chips2 .chip { font-size: 12px; padding: 3px 10px; }
+.chips2 .chip i {
+  font-style: normal;
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0;
+}
+.chips2 .chip.on i { color: var(--accent); }
