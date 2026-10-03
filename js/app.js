@@ -485,7 +485,7 @@ function wallsHtml(p) {
             const ratio = contrastRatio(chL, w.lum);
             const [tag, cls] = visibilityTag(ratio);
             return `
-          <div class="wall-tile${i === 0 ? " active" : ""}" data-wall="${i}" style="${w.style || ""}" title="${w.label} · 点击切换上方大图">
+          <div class="wall-tile${i === 0 ? " active" : ""}" data-wall="${i}" data-pid="${p.id}" style="${w.style || ""}" title="${w.label} · 点击切换上方大图">
             <span class="ch-box" style="width:56px;height:56px;color:${chColorOf(p)}">${crosshairParts(p, 56)}</span>
             <i class="wall-label">${w.label}</i>
             <b class="wall-score ${cls}">${tag} ${ratio.toFixed(1)}</b>
@@ -881,6 +881,42 @@ function bindEvents() {
     const card = e.target.closest("[data-id]");
     if (card) openDetail(card.dataset.id);
   });
+
+  // 九宫格凑近放大镜：等比例放大（背景+准星整体放大 3 倍，与鼠标位置精确对位）
+  const lensR = 85, lensZ = 3;
+  let tileLensEl = null, tileLensPid = "";
+  const hideTileLens = () => { if (tileLensEl) tileLensEl.style.display = "none"; };
+  document.addEventListener("mousemove", (e) => {
+    if (e.target.closest && !e.target.closest(".wall-tile")) { hideTileLens(); return; }
+    const tile = e.target.closest(".wall-tile");
+    if (!tile) { hideTileLens(); return; }
+    const p = PLAYERS.find((x) => x.id === tile.dataset.pid) || STREAMERS.find((x) => x.id === tile.dataset.pid) || PRESETS.find((x) => x.id === tile.dataset.pid);
+    if (!p) { hideTileLens(); return; }
+    if (!tileLensEl) {
+      tileLensEl = document.createElement("div");
+      tileLensEl.className = "tile-lens";
+      tileLensEl.innerHTML = '<div class="tile-lens-inner"></div>';
+      document.body.appendChild(tileLensEl);
+    }
+    const inner = tileLensEl.firstElementChild;
+    if (tile.dataset.pid !== tileLensPid) {
+      tileLensPid = tile.dataset.pid;
+      inner.innerHTML = `<span class="ch-box" style="width:56px;height:56px;color:${chColorOf(p)}">${crosshairParts(p, 56)}</span>`;
+    }
+    const rect = tile.getBoundingClientRect();
+    const x = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
+    const y = Math.max(0, Math.min(rect.height, e.clientY - rect.top));
+    // 内层与九宫格同尺寸同背景，整体放大后平移，使鼠标所指点正好落在镜片中心
+    inner.style.cssText = tile.style.cssText;
+    inner.style.width = rect.width + "px";
+    inner.style.height = rect.height + "px";
+    inner.style.transform = `translate(${lensR - x * lensZ}px, ${lensR - y * lensZ}px) scale(${lensZ})`;
+    tileLensEl.style.left = (e.clientX - lensR) + "px";
+    tileLensEl.style.top = (e.clientY - lensR) + "px";
+    tileLensEl.style.display = "block";
+  });
+  document.addEventListener("mouseleave", hideTileLens);
+  document.addEventListener("scroll", hideTileLens, true);
 
   // 底部对比栏：移除 / 开始对比 / 清空
   $("#cmp-tray").addEventListener("click", (e) => {

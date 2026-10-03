@@ -779,10 +779,34 @@ body {
 }
 .wall-tile:hover { border-color: var(--accent); }
 .wall-tile.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
-.wall-tile .ch-box { background: transparent; border: none; transition: transform 0.18s ease; z-index: 1; }
-.wall-tile:hover .ch-box { transform: scale(2.2); }   /* 凑近小格即放大细看准星 */
+.wall-tile .ch-box { background: transparent; border: none; z-index: 1; }
 .wall-tile .wall-label { z-index: 2; }
 .wall-tile .wall-score { z-index: 2; }
+
+/* 九宫格凑近放大镜（等比例：背景与准星整体放大，跟随鼠标） */
+.tile-lens {
+  position: fixed;
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55), inset 0 0 24px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  z-index: 60;
+  overflow: hidden;
+  display: none;
+}
+.tile-lens-inner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  display: grid;
+  place-items: center;
+  background-size: cover;
+  background-position: center;
+}
+.tile-lens-inner .ch-box { background: transparent; border: none; }
 .wall-label {
   position: absolute;
   left: 5px;
