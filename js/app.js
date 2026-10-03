@@ -331,12 +331,8 @@ function renderGrid() {
   if (isW) {
     $("#grid").innerHTML = renderGrouped(list, (w) => w.type, WEAPON_TYPE_ORDER);
   } else if (isL) {
-    // 点位：地图大组 → 组内按 英雄职责层 排序（英雄优先，通用垫后）
-    $("#grid").innerHTML = renderGrouped(list, (l) => l.map, null, (a, b) => {
-      const ra = a.agent ? ROLE_ORDER.indexOf(roleOf(a.agent)) : 99;
-      const rb = b.agent ? ROLE_ORDER.indexOf(roleOf(b.agent)) : 99;
-      return ra - rb || (a.agent || "").localeCompare(b.agent || "");
-    });
+    // 点位：地图大组 → 组内分 ⚔进攻方 / 🛡防守方 两类 → 类内按 英雄职责层 排序
+    $("#grid").innerHTML = renderLineupGrouped(list);
   } else {
     $("#grid").innerHTML = list.map(cardHtml).join("");
   }
@@ -366,6 +362,29 @@ function renderGrouped(list, groupFn, order, itemSort) {
   return groups.map((g) => `
     <h3 class="group-head">${g.key}<i>${g.items.length} 项</i></h3>
     <div class="grid">${g.items.map(cardHtml).join("")}</div>`).join("");
+}
+
+// ---------- 点位教学：地图大组 → ⚔进攻方 / 🛡防守方 两类 ----------
+function renderLineupGrouped(list) {
+  const groups = [];
+  for (const l of list) {
+    let g = groups.find((x) => x.map === l.map);
+    if (!g) { g = { map: l.map, atk: [], def: [] }; groups.push(g); }
+    (l.side === "防守" ? g.def : g.atk).push(l);
+  }
+  const byRole = (a, b) => {
+    const ra = a.agent ? ROLE_ORDER.indexOf(roleOf(a.agent)) : 99;
+    const rb = b.agent ? ROLE_ORDER.indexOf(roleOf(b.agent)) : 99;
+    return ra - rb || (a.agent || "").localeCompare(b.agent || "");
+  };
+  const sec = (head, cls, items) =>
+    `<h4 class="sub-head ${cls}">${head}<i>${items.length} 条</i></h4><div class="grid">${items.map(cardHtml).join("")}</div>`;
+  return groups.map((g) => {
+    const parts = [`<h3 class="group-head">${g.map}<i>${g.atk.length + g.def.length} 条</i></h3>`];
+    if (g.atk.length) parts.push(sec("⚔ 进攻方", "atk", [...g.atk].sort(byRole)));
+    if (g.def.length) parts.push(sec("🛡 防守方", "def", [...g.def].sort(byRole)));
+    return parts.join("");
+  }).join("");
 }
 
 // ---------- 武器节奏视图 ----------
