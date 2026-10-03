@@ -174,6 +174,7 @@ DPI: 800   游戏内灵敏度: 0.35   eDPI: 280   360°转身距离: 约47cm
 | 2026-09-27 | M4 Windows 安装包 | [已完成] | `pnpm dist` 打包成功：**release\赋能模拟器 Setup 0.4.0.exe**（194MB，NSIS 安装器：可选安装路径+桌面快捷方式）+ release\win-unpacked\ 免安装版 | 排障记录：①electron-builder 需在 PATH 中找到 pnpm——corepack shim 装到 `D:\tools\corepack-shims`（未污染系统目录），打包时临时挂 PATH ②NSIS 工具从 GitHub 下载超时——设 `ELECTRON_BUILDER_BINARIES_MIRROR` 用 npmmirror 镜像 ③pnpm 12 输出兼容性差，packageManager 锁定 pnpm@10.17.0 |
 | 2026-09-27 | 上传 GitHub（M5 前置） | [已完成] | 创建仓库 **CJuntong/funeng-moniqi** 并推送：main 分支全部提交 + M0~M4 五个里程碑标签 | GitHub CLI 授权因网络失败，改用本机已有凭据（Windows 凭据管理器里的 Git 凭据，复用未泄露）+ api.github.com 建仓；git 推送走 `http.curloptResolve` 固定可用 IP（140.82.112.3）绕开被墙的默认解析；.gitignore 已排除 node_modules/release（194MB 安装包不进仓库） |
 | 2026-09-27 | 发布在线网站 | [已完成] | 项目以 GitHub Pages 发布为公开网站：**https://cjuntong.github.io/funeng-moniqi/**（手机/任何电脑浏览器均可访问） | 用户要"一个 html 网站"；免费版 Pages 要求仓库公开，已将仓库转为 **public**（改回私有网站会停）；站点从 main 分支自动构建——以后 `git push` 后 1~2 分钟网站自动更新；中文文件名路径浏览器自动转码，实测资源全部 200 |
+| 2026-09-27 | 自动化设施四件套 | [已完成] | ①技能 `empower-update`：app 更新标准流程 ②技能 `empower-github-archive`：手动全量存档（验证→提交→换线路推送→远端核验）③技能 `empower-dev-agent`：开发智能体调度手册（采集员/验证员/存档员三个角色，并发≤2）④钩子：每次 `git commit` 后自动验证全部 JS 语法，通过且有待推提交则自动推送 GitHub（`.zcode/config.json` PostToolUse，脚本 tools/hooks/提交后验证推送.cjs） | 用户要求"更新后把关键步骤上传 git + 钩子检验后决定是否上传"；另建项目级 `AGENTS.md` 让每个新会话自动知晓协作规则与自动化设施（放在项目内 D 盘，非之前被拒的 C 盘用户级文件）；ZCode 自定义智能体以技能承载（独立 agents 目录仅插件支持） |
 
 ---
 

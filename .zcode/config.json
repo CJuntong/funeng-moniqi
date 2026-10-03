@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "enabled": true,
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"D:/vibecoding/无畏契约辅助/tools/hooks/提交后验证推送.cjs\""
+          }
+        ]
+      }
+    ]
+  }
+}
