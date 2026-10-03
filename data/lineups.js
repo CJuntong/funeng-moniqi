@@ -449,5 +449,113 @@ const LINEUP_VIDEOS = [
   "url": "https://www.bilibili.com/video/BV1Jh4y1q7xu",
   "play": 211327,
   "topic": "进点技巧"
+ },
+ {
+  "map": "天枢云阙",
+  "title": "超级实用！一期视频学会新地图[天枢云阙]【黑梦】诡眼道具点位！",
+  "author": "比比_Sama",
+  "bvid": "BV1sT7e67Eki",
+  "url": "https://www.bilibili.com/video/BV1sT7e67Eki",
+  "play": 155942,
+  "topic": "道具点位"
+ },
+ {
+  "map": "天枢云阙",
+  "title": "低分辐能带你从地图设计的视角彻底学会天枢云阙【瓦的地图理解】",
+  "author": "KiddoJioJio",
+  "bvid": "BV1937q63E83",
+  "url": "https://www.bilibili.com/video/BV1937q63E83",
+  "play": 153846,
+  "topic": "地图理解"
+ },
+ {
+  "map": "天枢云阙",
+  "title": "幽邃地窟A点防守悬崖前压旋转跳教学",
+  "author": "勇气小龙虾_",
+  "bvid": "BV1PkrQYhEgA",
+  "url": "https://www.bilibili.com/video/BV1PkrQYhEgA",
+  "play": 14332,
+  "topic": "边缘技巧"
+ },
+ {
+  "map": "深海明珠",
+  "title": "10分钟精通深海明珠，全地图教学——深海明珠篇",
+  "author": "大东彦",
+  "bvid": "BV1ZySgY4EnP",
+  "url": "https://www.bilibili.com/video/BV1ZySgY4EnP",
+  "play": 536170,
+  "topic": "地图理解"
+ },
+ {
+  "map": "深海明珠",
+  "title": "深海明珠KO道具点位 无畏契约先锋位KO教学 KO单向闪探测刀点位",
+  "author": "无畏战术大师兄",
+  "bvid": "BV1JWmEBiETX",
+  "url": "https://www.bilibili.com/video/BV1JWmEBiETX",
+  "play": 159899,
+  "topic": "闪光/道具点位"
+ },
+ {
+  "map": "深海明珠",
+  "title": "【深海明珠】猎枭/sova探测箭！简单好学，全地图覆盖！",
+  "author": "猎枭绝症柴柴",
+  "bvid": "BV1JwqRYDE2i",
+  "url": "https://www.bilibili.com/video/BV1JwqRYDE2i",
+  "play": 164962,
+  "topic": "侦查道具"
+ },
+ {
+  "map": "盐海矿镇",
+  "title": "盐海矿镇黑梦实用点位 无畏契约信息位黑梦诡眼点位教学",
+  "author": "无畏战术大师兄",
+  "bvid": "BV1GutyzAEsz",
+  "url": "https://www.bilibili.com/video/BV1GutyzAEsz",
+  "play": 258682,
+  "topic": "侦查道具点位"
+ },
+ {
+  "map": "盐海矿镇",
+  "title": "新地图【盐海矿镇】公式化封烟点位教学",
+  "author": "好家伙不演了",
+  "bvid": "BV1ZPKZz4E1b",
+  "url": "https://www.bilibili.com/video/BV1ZPKZz4E1b",
+  "play": 44044,
+  "topic": "烟雾点位"
+ },
+ {
+  "map": "盐海矿镇",
+  "title": "盐海矿镇的阴间冰墙教学",
+  "author": "修脚大师魏玲莹",
+  "bvid": "BV1dzf4B2EAi",
+  "url": "https://www.bilibili.com/video/BV1dzf4B2EAi",
+  "play": 129797,
+  "topic": "道具点位"
+ },
+ {
+  "map": "裂变峡谷",
+  "title": "五分钟掌握裂变峡谷！全地图教学-裂变峡谷篇",
+  "author": "大东彦",
+  "bvid": "BV1pnc7ejEMp",
+  "url": "https://www.bilibili.com/video/BV1pnc7ejEMp",
+  "play": 339592,
+  "topic": "地图理解"
+ },
+ {
+  "map": "裂变峡谷",
+  "title": "裂变峡谷铁臂超实用进攻道具！",
+  "author": "猫指导Valorant",
+  "bvid": "BV1QZwrewEMb",
+  "url": "https://www.bilibili.com/video/BV1QZwrewEMb",
+  "play": 88229,
+  "topic": "道具点位"
+ },
+ {
+  "map": "裂变峡谷",
+  "title": "【一招制胜】裂变峡谷进攻思路",
+  "author": "虞姬电竞-无畏契约",
+  "bvid": "BV1VFQmBJE8v",
+  "url": "https://www.bilibili.com/video/BV1VFQmBJE8v",
+  "play": 27517,
+  "topic": "进点技巧"
  }
 ];
